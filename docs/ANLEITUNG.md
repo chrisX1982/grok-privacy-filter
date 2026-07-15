@@ -8,10 +8,15 @@ Voraussetzungen: **Grok Build CLI** installiert, **Python 3.10+**, Internetzugan
 ## 0. Was du am Ende hast
 
 1. **Server-Opt-out** — Konto will keine Coding-Data-Retention  
-2. **Harte CLI-Config** — Telemetry/Trace/Prefetch aus  
+2. **Harte CLI-Config** — Telemetry/Trace/Prefetch aus + **`cli_chat_proxy_base_url`**  
 3. **Hook** — Agent darf nicht zu xAI/GCS hochladen  
-4. **Filter-Proxy** — Chat läuft, Storage/Upload-Pfade auf dem Proxy-Host → **403**  
-5. (Optional) **Firewall** — nur Auth + lokaler Proxy  
+4. **Filter-Proxy** — Chat läuft, Storage/Upload-Pfade → **403**  
+5. **ensure_proxy** — startet den Proxy nur, wenn er nicht läuft  
+6. **Autostart und/oder VS Code folderOpen-Task**  
+7. (Optional) **Firewall** — nur Auth + lokaler Proxy  
+
+**Arbeitest du in der VS Code Extension?** → primär **[VSCODE.md](VSCODE.md)** lesen.  
+Kein extra CMD-Fenster nötig.
 
 Lies parallel: [GRENZEN.md](GRENZEN.md).
 
@@ -112,59 +117,64 @@ Danach: **neue Grok-Session**.
 
 ---
 
-## 5. Filter-Proxy starten
+## 5. Filter-Proxy + VS Code / Autostart
 
-### Terminal A — Proxy
+### 5a. Empfohlen: ensure_proxy (idempotent)
 
-**Windows:**
+```bash
+# Windows
+py -3 %USERPROFILE%\.grok\proxy\ensure_proxy.py
+
+# Unix
+python3 ~/.grok/proxy/ensure_proxy.py
+```
+
+Startet den Proxy **nur**, wenn Port **18743** noch nicht offen ist. Kein zweites Fenster nötig, wenn er schon läuft.
+
+### 5b. Mit VS Code Extension
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install_vscode.ps1 -Workspace "C:\dein\projekt" -UserSettings
+```
+
+Details: **[VSCODE.md](VSCODE.md)**.
+
+Kern in `~/.grok/config.toml`:
+
+```toml
+[endpoints]
+cli_chat_proxy_base_url = "http://127.0.0.1:18743/v1"
+```
+
+Danach: **`/new`** in Grok oder Window Reload.
+
+### 5c. Autostart bei Login
+
+```powershell
+# Windows
+powershell -ExecutionPolicy Bypass -File .\scripts\install_autostart.ps1
+# optional zusaetzlich:
+powershell -ExecutionPolicy Bypass -File .\scripts\install_autostart.ps1 -ScheduledTask
+# entfernen:
+powershell -ExecutionPolicy Bypass -File .\scripts\install_autostart.ps1 -Remove
+```
+
+```bash
+# macOS / Linux
+bash scripts/install_autostart.sh
+bash scripts/install_autostart.sh --remove
+```
+
+### 5d. Optional: Terminal-TUI mit Env
 
 ```bat
 scripts\start_proxy.cmd
-```
-
-**Unix:**
-
-```bash
-bash scripts/start_proxy.sh
-```
-
-Du solltest sehen:
-
-```text
-Listening http://127.0.0.1:18743 → https://cli-chat-proxy.grok.com (default-deny)
-```
-
-Logs: `logs/proxy-YYYY-MM-DD.log` im Repo oder `~/.grok/proxy/logs/`.
-
-### Terminal B — Grok gefiltert
-
-**Windows:**
-
-```bat
 scripts\start_grok_filtered.cmd
 ```
 
-**Unix:**
+Mit gesetzter Config-`endpoints`-URL ist `start_grok_filtered` oft überflüssig — `ensure_proxy` + `grok` reicht.
 
-```bash
-bash scripts/start_grok_filtered.sh
-```
-
-Das setzt u. a.:
-
-```text
-GROK_CLI_CHAT_PROXY_BASE_URL=http://127.0.0.1:18743/v1
-GROK_TELEMETRY_ENABLED=0
-GROK_FEEDBACK_ENABLED=0
-GROK_MEMORY=0
-```
-
-### Manuell ohne Script
-
-```bash
-export GROK_CLI_CHAT_PROXY_BASE_URL=http://127.0.0.1:18743/v1
-grok
-```
+Logs: `~/.grok/proxy/logs/` und ggf. Repo `logs/`.
 
 ---
 

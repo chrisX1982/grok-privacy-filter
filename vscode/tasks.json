@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Grok Privacy: Ensure Filter Proxy",
+      "type": "shell",
+      "command": "py -3 \"${env:USERPROFILE}\\.grok\\proxy\\ensure_proxy.py\"",
+      "windows": {
+        "options": {
+          "shell": {
+            "executable": "cmd.exe",
+            "args": ["/c"]
+          }
+        }
+      },
+      "linux": {
+        "command": "python3 \"${env:HOME}/.grok/proxy/ensure_proxy.py\""
+      },
+      "osx": {
+        "command": "python3 \"${env:HOME}/.grok/proxy/ensure_proxy.py\""
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "close": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}

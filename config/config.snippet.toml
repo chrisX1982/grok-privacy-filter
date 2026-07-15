@@ -1,11 +1,9 @@
 # =============================================================================
-# Grok Build — Privacy-Haertung (Snippet)
-# In ~/.grok/config.toml einfügen bzw. mit bestehender Datei mergen.
-# Nach Aenderung: neue Grok-Session starten.
+# Grok Privacy Filter — Config-Snippet fuer ~/.grok/config.toml
+# Nach Aenderung: neue Grok-Session (/new) oder VS Code Window Reload.
 # =============================================================================
 
 [cli]
-# Kein stiller Auto-Update-Download von x.ai
 auto_update = false
 
 [marketplace]
@@ -14,24 +12,26 @@ official_marketplace_auto_installed = false
 [features]
 telemetry = false
 feedback = false
-# Weniger lokales Code-Scannen / Graph
 codebase_indexing = false
-# Kein Remote-Settings / Model-Catalog-Prefetch von xAI-Backends
-# Trade-off: nur bundled Models/Settings
 remote_fetch = false
 
 [telemetry]
 trace_upload = false
 mixpanel_enabled = false
 
-# Client-Flag (falls von der installierten Grok-Version ausgewertet)
 [harness]
 disable_codebase_upload = true
 
 [memory]
 enabled = false
 
-# Zusaetzliche Permission-Sperren (Agent-Shell)
+# Pflicht fuer VS Code Extension + CLI: Chat ueber lokalen Filter-Proxy
+# Proxy starten:  py -3 ~/.grok/proxy/ensure_proxy.py
+# Autostart:      scripts/install_autostart.ps1
+# Mit VS Code:    scripts/install_vscode.ps1
+[endpoints]
+cli_chat_proxy_base_url = "http://127.0.0.1:18743/v1"
+
 [permission]
 deny = [
   "Bash(*cli-chat-proxy.grok.com*)",

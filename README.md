@@ -16,13 +16,17 @@ Dieses Repo bündelt **sofort nutzbare** Gegenmassnahmen für Einzelpersonen:
 | Schicht | Werkzeug | Wirkung |
 |--------|----------|---------|
 | 1 | `config/privacy-opt-out.py` | API: `codingDataRetentionOptOut=true` |
-| 2 | `config/config.snippet.toml` | Telemetry/Trace/Prefetch/Indexing aus |
+| 2 | `config/config.snippet.toml` | Telemetry/Trace/Prefetch/Indexing + **endpoints-Proxy** |
 | 3 | `hooks/block-xai-upload.*` | Agent-Tools dürfen nicht zu xAI/GCS pushen |
-| 4 | `proxy/xai_filter_proxy.py` | Nur erlaubte Pfade → Upstream; Storage **403** |
-| 5 | (optional) Firewall | Nur Auth + lokaler Proxy — siehe Docs |
+| 4 | `proxy/xai_filter_proxy.py` + `ensure_proxy.py` | Default-Deny-Proxy; startet nur wenn nötig |
+| 5 | Autostart / VS Code Task | Proxy bei Login bzw. beim Öffnen des Workspace |
+| 6 | (optional) Firewall | Nur Auth + lokaler Proxy — siehe Docs |
+
+**VS Code Extension:** Kein extra CMD — Config `cli_chat_proxy_base_url` + Hintergrund-Proxy.  
+Details: **[docs/VSCODE.md](docs/VSCODE.md)**.
 
 **Kein Marketing:** Firewall auf die ganze `grok.exe` = CLI tot.  
-**Proxy** = CLI nutzbar + Upload-Pfade auf dem Chat-Host blocken.
+**Proxy** = CLI/Extension nutzbar + Upload-Pfade auf dem Chat-Host blocken.
 
 ---
 
@@ -33,26 +37,34 @@ Dieses Repo bündelt **sofort nutzbare** Gegenmassnahmen für Einzelpersonen:
 - Grok Build installiert und einmal `grok login`
 - Python **3.10+** (`python` / `python3` / Windows `py -3`)
 
-### Windows
+### Windows — empfohlen wenn du in **VS Code** arbeitest
 
 ```powershell
 git clone https://github.com/chrisX1982/grok-privacy-filter.git
 cd grok-privacy-filter
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1
 py -3 .\config\privacy-opt-out.py
+powershell -ExecutionPolicy Bypass -File .\scripts\install_vscode.ps1 -Workspace "C:\Pfad\zu\deinem\Projekt" -UserSettings
+powershell -ExecutionPolicy Bypass -File .\scripts\install_autostart.ps1
 ```
 
-**Terminal 1:**
+Danach in Grok: **`/new`** (oder VS Code Window Reload).
+
+| Script | Zweck |
+|--------|--------|
+| `install.ps1` | Hook, Proxy-Dateien, Config-Hinweis |
+| `install_vscode.ps1` | `endpoints` in config + Task beim Ordner-Öffnen |
+| `install_autostart.ps1` | Proxy bei Windows-Login (unsichtbar) |
+| `ensure_proxy.py` | Proxy starten **nur wenn** Port 18743 frei/zu |
+
+### Windows — nur Terminal-TUI (optional)
 
 ```bat
 scripts\start_proxy.cmd
-```
-
-**Terminal 2:**
-
-```bat
 scripts\start_grok_filtered.cmd
 ```
+
+Mit `cli_chat_proxy_base_url` in der Config reicht oft nur `ensure_proxy` + normales `grok`.
 
 ### macOS / Linux
 
@@ -61,10 +73,9 @@ git clone https://github.com/chrisX1982/grok-privacy-filter.git
 cd grok-privacy-filter
 bash scripts/install.sh
 python3 config/privacy-opt-out.py
-# Terminal 1:
-bash scripts/start_proxy.sh
-# Terminal 2:
-bash scripts/start_grok_filtered.sh
+bash scripts/install_autostart.sh
+python3 ~/.grok/proxy/ensure_proxy.py
+# VS Code: docs/VSCODE.md — vscode/tasks.json nach .vscode/ kopieren
 ```
 
 ### Prüfen
@@ -87,24 +98,28 @@ In Grok: `/hooks` → Reload → **block-xai-upload** aktiv.
 
 ```text
 grok-privacy-filter/
-├── README.md                 ← du bist hier
-├── LICENSE                   ← MIT
+├── README.md
+├── LICENSE
 ├── config/
-│   ├── config.snippet.toml   ← in ~/.grok/config.toml mergen
-│   └── privacy-opt-out.py    ← Server Opt-out
+│   ├── config.snippet.toml      ← inkl. [endpoints] Proxy-URL
+│   └── privacy-opt-out.py
 ├── docs/
-│   ├── ANLEITUNG.md          ← ausführlich, Schritt für Schritt
-│   ├── GRENZEN.md            ← ehrliche Limits
-│   └── WINDOWS-FIREWALL.md   ← optionale Host-Allowlist
+│   ├── ANLEITUNG.md
+│   ├── VSCODE.md                ← Extension-Alltag (kein CMD)
+│   ├── GRENZEN.md
+│   ├── WINDOWS-FIREWALL.md
+│   └── GITHUB.md
 ├── hooks/
-│   ├── block-xai-upload.py
-│   └── block-xai-upload.json.template
 ├── proxy/
-│   └── xai_filter_proxy.py   ← Default-Deny Reverse-Proxy
+│   └── xai_filter_proxy.py
+├── vscode/
+│   └── tasks.json               ← Vorlage folderOpen → ensure_proxy
 └── scripts/
     ├── install.ps1 / install.sh
-    ├── start_proxy.cmd / .sh
-    ├── start_grok_filtered.cmd / .sh
+    ├── install_vscode.ps1       ← Config + Workspace-Task
+    ├── install_autostart.ps1/.sh
+    ├── ensure_proxy.py          ← startet Proxy nur wenn noetig
+    ├── start_proxy.* / start_grok_filtered.*
     └── verify.ps1
 ```
 
@@ -163,6 +178,7 @@ Formelle Löschung bei xAI: [privacy-portal](https://x.ai/privacy-portal) — **
 
 | Datei | Inhalt |
 |-------|--------|
+| [docs/VSCODE.md](docs/VSCODE.md) | **VS Code / Cursor Extension** — Autostart, Tasks, Config |
 | [docs/ANLEITUNG.md](docs/ANLEITUNG.md) | Vollständige Installations- und Alltagsanleitung |
 | [docs/GRENZEN.md](docs/GRENZEN.md) | Was geht / was nicht |
 | [docs/WINDOWS-FIREWALL.md](docs/WINDOWS-FIREWALL.md) | Optionale Firewall-Allowlist |

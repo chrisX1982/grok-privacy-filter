@@ -104,11 +104,29 @@ $hookJsonPath = Join-Path $HooksDir "block-xai-upload.json"
 
 Write-Host "Hook installiert: $hookJsonPath"
 
-# --- Proxy copy ---
+# --- Proxy + ensure_proxy ---
 Copy-Item -Force (Join-Path $RepoRoot "proxy\xai_filter_proxy.py") (Join-Path $ProxyDir "xai_filter_proxy.py")
+Copy-Item -Force (Join-Path $RepoRoot "scripts\ensure_proxy.py") (Join-Path $ProxyDir "ensure_proxy.py")
 Copy-Item -Force (Join-Path $RepoRoot "scripts\start_proxy.cmd") (Join-Path $ProxyDir "start_proxy.cmd") -ErrorAction SilentlyContinue
 Copy-Item -Force (Join-Path $RepoRoot "scripts\start_grok_filtered.cmd") (Join-Path $ProxyDir "start_grok_filtered.cmd") -ErrorAction SilentlyContinue
 Write-Host "Proxy kopiert nach: $ProxyDir"
+
+# endpoints in config (VS Code Extension)
+$ConfigPath = Join-Path $GrokHome "config.toml"
+$endpointNeedle = "cli_chat_proxy_base_url"
+$endpointBlock = @"
+
+# Grok Privacy Filter — Chat ueber lokalen Proxy (Extension + CLI)
+[endpoints]
+cli_chat_proxy_base_url = "http://127.0.0.1:18743/v1"
+"@
+if (Test-Path $ConfigPath) {
+  $rawCfg = Get-Content $ConfigPath -Raw
+  if ($rawCfg -notmatch [regex]::Escape($endpointNeedle)) {
+    Add-Content -Path $ConfigPath -Value $endpointBlock
+    Write-Host "endpoints an config.toml angehaengt."
+  }
+}
 
 # --- Config snippet merge hint ---
 $snippet = Join-Path $RepoRoot "config\config.snippet.toml"
@@ -125,9 +143,11 @@ if (Test-Path $configPath) {
 
 Write-Host ""
 Write-Host "Naechste Schritte:" -ForegroundColor Green
-Write-Host "  1. python config\privacy-opt-out.py   (Server Opt-out)"
-Write-Host "  2. Proxy:  scripts\start_proxy.cmd"
-Write-Host "  3. Grok:   scripts\start_grok_filtered.cmd"
-Write-Host "  4. In Grok: /hooks  →  r (reload)  → block-xai-upload sichtbar"
-Write-Host "  5. Docs:   docs\ANLEITUNG.md"
+Write-Host "  1. py -3 config\privacy-opt-out.py"
+Write-Host "  2. VS Code Extension (empfohlen):"
+Write-Host "       powershell -ExecutionPolicy Bypass -File scripts\install_vscode.ps1 -Workspace . -UserSettings"
+Write-Host "  3. Autostart Proxy:"
+Write-Host "       powershell -ExecutionPolicy Bypass -File scripts\install_autostart.ps1"
+Write-Host "  4. Proxy jetzt:  py -3 $ProxyDir\ensure_proxy.py"
+Write-Host "  5. Docs: docs\VSCODE.md  und  docs\ANLEITUNG.md"
 Write-Host "Fertig."
