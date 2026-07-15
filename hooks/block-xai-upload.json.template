@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_COMMAND_PLACEHOLDER",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "SESSION_START_PLACEHOLDER",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

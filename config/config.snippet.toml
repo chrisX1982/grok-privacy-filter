@@ -1,0 +1,49 @@
+# =============================================================================
+# Grok Build — Privacy-Haertung (Snippet)
+# In ~/.grok/config.toml einfügen bzw. mit bestehender Datei mergen.
+# Nach Aenderung: neue Grok-Session starten.
+# =============================================================================
+
+[cli]
+# Kein stiller Auto-Update-Download von x.ai
+auto_update = false
+
+[marketplace]
+official_marketplace_auto_installed = false
+
+[features]
+telemetry = false
+feedback = false
+# Weniger lokales Code-Scannen / Graph
+codebase_indexing = false
+# Kein Remote-Settings / Model-Catalog-Prefetch von xAI-Backends
+# Trade-off: nur bundled Models/Settings
+remote_fetch = false
+
+[telemetry]
+trace_upload = false
+mixpanel_enabled = false
+
+# Client-Flag (falls von der installierten Grok-Version ausgewertet)
+[harness]
+disable_codebase_upload = true
+
+[memory]
+enabled = false
+
+# Zusaetzliche Permission-Sperren (Agent-Shell)
+[permission]
+deny = [
+  "Bash(*cli-chat-proxy.grok.com*)",
+  "Bash(*storage.googleapis.com*)",
+  "Bash(*api.x.ai*)",
+  "Bash(*code.grok.com*)",
+  "Bash(*curl*x.ai*)",
+  "Bash(*curl*grok.com*)",
+  "Bash(*wget*x.ai*)",
+  "Bash(*wget*grok.com*)",
+  "Bash(*Invoke-WebRequest*x.ai*)",
+  "Bash(*Invoke-WebRequest*grok.com*)",
+  "Bash(*iwr*x.ai*)",
+  "Bash(*iwr*grok.com*)",
+]
