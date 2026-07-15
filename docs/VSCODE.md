@@ -21,26 +21,27 @@ Der Filter greift in der Extension, wenn:
 
 ## Einmal einrichten (Windows)
 
-Aus dem Repo-Root:
+**Ein Befehl (empfohlen):**
 
 ```powershell
-# Basis (Hook, Proxy-Dateien, …)
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1
-
-# Server Opt-out
-py -3 .\config\privacy-opt-out.py
-
-# VS Code: Config + Workspace-Task + Proxy jetzt starten
-powershell -ExecutionPolicy Bypass -File .\scripts\install_vscode.ps1 -Workspace "C:\Pfad\zu\deinem\Projekt" -UserSettings
-
-# Proxy bei Windows-Login immer sicherstellen
-powershell -ExecutionPolicy Bypass -File .\scripts\install_autostart.ps1
+cd C:\Pfad\zu\grok-privacy-filter
+powershell -ExecutionPolicy Bypass -File .\scripts\install_all.ps1 -Workspace "C:\Pfad\zu\deinem\Projekt"
 ```
 
-**Aktuelles Projekt (z. B. dieses Repo geöffnet):**
+Optional mit Watchdog (startet Proxy alle 90s neu, falls abgestürzt):
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install_vscode.ps1 -Workspace . -UserSettings
+powershell -ExecutionPolicy Bypass -File .\scripts\install_all.ps1 -Workspace "C:\dein\projekt" -WatchdogTask
+```
+
+**Oder schrittweise:**
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1
+py -3 .\config\privacy-opt-out.py
+powershell -ExecutionPolicy Bypass -File .\scripts\install_vscode.ps1 -Workspace "C:\Pfad\zu\deinem\Projekt" -UserSettings
+powershell -ExecutionPolicy Bypass -File .\scripts\install_autostart.ps1
+# optional: -Watchdog
 ```
 
 ### Was `install_vscode.ps1` macht
@@ -57,9 +58,18 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install_vscode.ps1 -Workspace
 
 | Aktion | Detail |
 |--------|--------|
-| Startup-Ordner | `GrokPrivacyFilterProxy.vbs` (unsichtbar, ruft `ensure_proxy.py`) |
-| `-ScheduledTask` | zusätzlich geplante Aufgabe „At logon“ |
-| `-Remove` | Autostart wieder entfernen |
+| Startup-Ordner | `GrokPrivacyFilterProxy.vbs` mit **absolutem Python-Pfad** (kein PATH-Glück) |
+| `-ScheduledTask` | geplante Aufgabe AtLogOn + Restart |
+| `-Watchdog` | zusaetzlich Loop `ensure_proxy --watchdog` alle 90s |
+| `-Remove` | Autostart + Tasks entfernen |
+
+### Deinstallation
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\uninstall.ps1
+# optional endpoints aus config entfernen + Proxy-Prozess:
+powershell -ExecutionPolicy Bypass -File .\scripts\uninstall.ps1 -RemoveConfigEndpoints -KillProxy
+```
 
 ---
 

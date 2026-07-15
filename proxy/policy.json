@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "comment": "Default-deny. Nur was Grok zum Arbeiten braucht. Bei Chat-403: BLOCK-Log pruefen und hier vorsichtig ergaenzen.",
+  "upstream_host": "cli-chat-proxy.grok.com",
+  "upstream_port": 443,
+  "allow_prefixes": [
+    "/v1/chat/completions",
+    "/v1/responses",
+    "/v1/models",
+    "/v1/user",
+    "/v1/privacy/coding-data-retention"
+  ],
+  "allow_get_only_prefixes": [
+    "/v1/settings"
+  ],
+  "deny_prefixes": [
+    "/v1/storage",
+    "/v1/upload",
+    "/storage",
+    "/v1/codebase",
+    "/v1/workspace",
+    "/v1/sync",
+    "/v1/trace",
+    "/v1/telemetry",
+    "/v1/feedback",
+    "/v1/bundle",
+    "/v1/codebase_upload"
+  ],
+  "block_git_bundle_bodies": true,
+  "block_pack_magic_bodies": true,
+  "max_body_gzip_bytes": 256000,
+  "log_max_bytes": 5242880,
+  "log_backup_count": 5
+}

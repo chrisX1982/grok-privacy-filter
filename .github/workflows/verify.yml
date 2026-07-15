@@ -1,0 +1,46 @@
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Hook + policy + proxy smoke
+        shell: pwsh
+        run: |
+          python -c "import json,subprocess,sys; from pathlib import Path
+script=Path('hooks/block-xai-upload.py')
+cases=[('d',{'toolName':'run_terminal_command','toolInput':{'command':'curl https://x.ai'}},'deny'),('a',{'toolName':'run_terminal_command','toolInput':{'command':'git status'}},'allow')]
+for n,p,e in cases:
+ r=subprocess.run([sys.executable,str(script)],input=json.dumps(p),text=True,capture_output=True)
+ assert json.loads(r.stdout)['decision']==e, (n,r.stdout)
+print('hooks ok')"
+          python -c "
+import sys
+from pathlib import Path
+sys.path.insert(0,'proxy')
+import xai_filter_proxy as p
+p.POLICY=p.load_policy(Path('proxy/policy.json'))
+assert p.path_allowed('POST','/v1/chat/completions')[0]
+assert not p.path_allowed('GET','/v1/storage')[0]
+print('policy ok')
+"
+          # start proxy briefly
+          $p = Start-Process -PassThru -FilePath python -ArgumentList @('proxy/xai_filter_proxy.py','--port','18745','--policy','proxy/policy.json') -WindowStyle Hidden
+          Start-Sleep -Seconds 2
+          try {
+            try { Invoke-WebRequest http://127.0.0.1:18745/v1/storage -UseBasicParsing } catch { if ([int]$_.Exception.Response.StatusCode -ne 403) { throw $_ } }
+            $h = Invoke-WebRequest http://127.0.0.1:18745/_gpf/health -UseBasicParsing
+            if ($h.StatusCode -ne 200) { throw 'health' }
+            Write-Host 'proxy smoke ok'
+          } finally {
+            Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue
+          }

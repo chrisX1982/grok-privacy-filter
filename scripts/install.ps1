@@ -34,45 +34,21 @@ foreach ($c in @("py -3", "python", "python3")) {
     if ($LASTEXITCODE -eq 0 -and $v) { $py = $v.Trim(); break }
   } catch {}
 }
+$HealthPySrc = Join-Path $RepoRoot "hooks\proxy_health_session.py"
+$HealthDest = Join-Path $HooksDir "proxy_health_session.py"
+if (Test-Path $HealthPySrc) { Copy-Item -Force $HealthPySrc $HealthDest }
+
 if (-not $py) {
   Write-Warning "Python nicht gefunden. Hook-JSON nutzt 'py -3' als Fallback."
   $hookCmd = "py -3 `"$HookDestPy`""
-  $sessionCmd = "py -3 -c `"print('[block-xai-upload] aktiv')`""
+  $healthCmd = "py -3 `"$HealthDest`""
 } else {
   Write-Host "Python: $py"
   $hookCmd = "`"$py`" `"$HookDestPy`""
-  $sessionCmd = "`"$py`" -c `"print('[block-xai-upload] aktiv')`""
+  $healthCmd = "`"$py`" `"$HealthDest`""
 }
 
-$hookJson = @{
-  hooks = @{
-    PreToolUse = @(
-      @{
-        hooks = @(
-          @{
-            type = "command"
-            command = $hookCmd
-            timeout = 10
-          }
-        )
-      }
-    )
-    SessionStart = @(
-      @{
-        hooks = @(
-          @{
-            type = "command"
-            command = $sessionCmd
-            timeout = 5
-          }
-        )
-      }
-    )
-  }
-} | ConvertTo-Json -Depth 8
-
 $hookJsonPath = Join-Path $HooksDir "block-xai-upload.json"
-# ConvertTo-Json may produce PSCustomObject quirks — write carefully
 @"
 {
   "hooks": {
@@ -92,8 +68,8 @@ $hookJsonPath = Join-Path $HooksDir "block-xai-upload.json"
         "hooks": [
           {
             "type": "command",
-            "command": $($sessionCmd | ConvertTo-Json),
-            "timeout": 5
+            "command": $($healthCmd | ConvertTo-Json),
+            "timeout": 15
           }
         ]
       }
@@ -102,10 +78,11 @@ $hookJsonPath = Join-Path $HooksDir "block-xai-upload.json"
 }
 "@ | Set-Content -Encoding utf8 $hookJsonPath
 
-Write-Host "Hook installiert: $hookJsonPath"
+Write-Host "Hook installiert: $hookJsonPath (PreToolUse upload-block + SessionStart proxy-health)"
 
-# --- Proxy + ensure_proxy ---
+# --- Proxy + ensure_proxy + policy ---
 Copy-Item -Force (Join-Path $RepoRoot "proxy\xai_filter_proxy.py") (Join-Path $ProxyDir "xai_filter_proxy.py")
+Copy-Item -Force (Join-Path $RepoRoot "proxy\policy.json") (Join-Path $ProxyDir "policy.json")
 Copy-Item -Force (Join-Path $RepoRoot "scripts\ensure_proxy.py") (Join-Path $ProxyDir "ensure_proxy.py")
 Copy-Item -Force (Join-Path $RepoRoot "scripts\start_proxy.cmd") (Join-Path $ProxyDir "start_proxy.cmd") -ErrorAction SilentlyContinue
 Copy-Item -Force (Join-Path $RepoRoot "scripts\start_grok_filtered.cmd") (Join-Path $ProxyDir "start_grok_filtered.cmd") -ErrorAction SilentlyContinue

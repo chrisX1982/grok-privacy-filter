@@ -25,6 +25,10 @@ Dieses Repo bündelt **sofort nutzbare** Gegenmassnahmen für Einzelpersonen:
 **VS Code Extension:** Kein extra CMD — Config `cli_chat_proxy_base_url` + Hintergrund-Proxy.  
 Details: **[docs/VSCODE.md](docs/VSCODE.md)**.
 
+**Scope (ehrlich):** Filtert Pfade auf `cli-chat-proxy` (Storage/Upload default-deny).  
+Chat/Inference bleibt nutzbar. Blockiert **nicht** magisch alle Hosts der Welt und beweist **keine** Server-Löschung.  
+Siehe [docs/GRENZEN.md](docs/GRENZEN.md).
+
 **Kein Marketing:** Firewall auf die ganze `grok.exe` = CLI tot.  
 **Proxy** = CLI/Extension nutzbar + Upload-Pfade auf dem Chat-Host blocken.
 
@@ -42,20 +46,19 @@ Details: **[docs/VSCODE.md](docs/VSCODE.md)**.
 ```powershell
 git clone https://github.com/chrisX1982/grok-privacy-filter.git
 cd grok-privacy-filter
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1
-py -3 .\config\privacy-opt-out.py
-powershell -ExecutionPolicy Bypass -File .\scripts\install_vscode.ps1 -Workspace "C:\Pfad\zu\deinem\Projekt" -UserSettings
-powershell -ExecutionPolicy Bypass -File .\scripts\install_autostart.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\install_all.ps1 -Workspace "C:\Pfad\zu\deinem\Projekt"
 ```
 
 Danach in Grok: **`/new`** (oder VS Code Window Reload).
 
 | Script | Zweck |
 |--------|--------|
-| `install.ps1` | Hook, Proxy-Dateien, Config-Hinweis |
-| `install_vscode.ps1` | `endpoints` in config + Task beim Ordner-Öffnen |
-| `install_autostart.ps1` | Proxy bei Windows-Login (unsichtbar) |
-| `ensure_proxy.py` | Proxy starten **nur wenn** Port 18743 frei/zu |
+| **`install_all.ps1`** | Alles in einem Rutsch |
+| `install.ps1` | Hook, Proxy, policy, Config-endpoints |
+| `install_vscode.ps1` | Task folderOpen + User-Settings |
+| `install_autostart.ps1` | Login + optional Watchdog |
+| `ensure_proxy.py` | Start nur wenn noetig; `--watchdog` |
+| `uninstall.ps1` | Sauber entfernen |
 
 ### Windows — nur Terminal-TUI (optional)
 
