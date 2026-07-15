@@ -36,7 +36,7 @@ Dieses Repo bündelt **sofort nutzbare** Gegenmassnahmen für Einzelpersonen:
 ### Windows
 
 ```powershell
-git clone https://github.com/<USER>/grok-privacy-filter.git
+git clone https://github.com/chrisX1982/grok-privacy-filter.git
 cd grok-privacy-filter
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1
 py -3 .\config\privacy-opt-out.py
@@ -57,7 +57,7 @@ scripts\start_grok_filtered.cmd
 ### macOS / Linux
 
 ```bash
-git clone https://github.com/<USER>/grok-privacy-filter.git
+git clone https://github.com/chrisX1982/grok-privacy-filter.git
 cd grok-privacy-filter
 bash scripts/install.sh
 python3 config/privacy-opt-out.py

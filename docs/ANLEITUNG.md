@@ -20,7 +20,7 @@ Lies parallel: [GRENZEN.md](GRENZEN.md).
 ## 1. Repo holen
 
 ```bash
-git clone https://github.com/<DEIN-USER>/grok-privacy-filter.git
+git clone https://github.com/chrisX1982/grok-privacy-filter.git
 cd grok-privacy-filter
 ```
 

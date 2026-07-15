@@ -14,13 +14,13 @@ git add .
 git status   # KEINE auth.json / Tokens
 git commit -m "Initial release: Grok privacy filter (proxy, hook, opt-out)"
 git branch -M main
-git remote add origin https://github.com/<USER>/grok-privacy-filter.git
+git remote add origin https://github.com/chrisX1982/grok-privacy-filter.git
 git push -u origin main
 ```
 
 ## 3. README anpassen
 
-In `README.md` die Clone-URL `https://github.com/<USER>/...` durch deinen User ersetzen.
+Clone-URL: `https://github.com/chrisX1982/grok-privacy-filter`
 
 ## 4. Repo-Beschreibung (Vorschlag)
 
