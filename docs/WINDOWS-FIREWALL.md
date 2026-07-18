@@ -1,49 +1,49 @@
-# Windows-Firewall — enge Host-Allowlist (optional, Admin)
+# Windows Firewall — strict host allow-list (optional, requires admin)
 
-Ziel: `grok.exe` darf **nur** noch
+Goal: `grok.exe` may **only** reach
 
-1. den **lokalen Filter-Proxy** (`127.0.0.1:18743`) und  
-2. **`auth.x.ai`** (Login/Token)
+1. the **local filter proxy** (`127.0.0.1:18743`) and  
+2. **`auth.x.ai`** (login / token)
 
-erreichen. Alles andere (inkl. `storage.googleapis.com`, `code.grok.com`, …) wird geblockt.
+Everything else (including `storage.googleapis.com`, `code.grok.com`, …) is blocked.
 
-> **Warnung:** Zu eng = Login/Chat bricht. Zuerst Proxy-only testen, dann Firewall.
+> **Warning:** Too strict = login/chat breaks. Test with proxy-only first, then add the firewall.
 
-## Voraussetzung
+## Prerequisite
 
-- Proxy läuft: `scripts\start_proxy.cmd`
-- Grok startet mit: `scripts\start_grok_filtered.cmd`  
+- Proxy is running: `scripts\start_proxy.cmd`
+- Grok starts with: `scripts\start_grok_filtered.cmd`  
   (`GROK_CLI_CHAT_PROXY_BASE_URL=http://127.0.0.1:18743/v1`)
 
-## Manuell (Windows-Sicherheit)
+## Manual (Windows Security)
 
-1. **Windows-Sicherheit** → Firewall → Erweiterte Einstellungen  
-2. **Ausgehende Regeln** → Neue Regel → Programm  
-3. Programm: `%USERPROFILE%\.grok\bin\grok.exe` (und ggf. `agent.exe`)  
-4. Aktion: **Verbindung blockieren** als Default-Idee — besser:  
+1. **Windows Security** → Firewall → Advanced settings  
+2. **Outbound rules** → New rule → Program  
+3. Program: `%USERPROFILE%\.grok\bin\grok.exe` (and possibly `agent.exe`)  
+4. Action: **Block connection** as the default idea — better:
 
-### Empfohlene Strategie
+### Recommended strategy
 
-**A) Block-Regel (breit)** für `grok.exe` ausgehend = block  
-**B) Allow-Regeln davor (höhere Priorität):**
+**A)** Create a broad **Block rule** for outbound `grok.exe`  
+**B)** Create **Allow rules before it** (higher priority):
 
-| Regel | Remote |
-|-------|--------|
-| Allow | `127.0.0.1` / `::1` (lokaler Proxy) |
+| Rule | Remote |
+|------|--------|
+| Allow | `127.0.0.1` / `::1` (local proxy) |
 | Allow | `auth.x.ai` (HTTPS 443) |
 
-Windows-Firewall filtert oft nach Programm + Port, nicht immer elegant nach DNS-Name. Praktisch:
+Windows Firewall often filters by program + port, not always cleanly by DNS name. In practice:
 
-1. Allow TCP out zu **Localport any → Remote 127.0.0.1:18743** für grok.exe  
-2. Allow TCP out **443** zu den IP-Adressen von `auth.x.ai` (können sich ändern!)  
-3. Block rest für grok.exe  
+1. Allow TCP outbound to **local port any → remote 127.0.0.1:18743** for grok.exe  
+2. Allow TCP outbound **443** to the IP addresses of `auth.x.ai` (these can change!)  
+3. Block everything else for grok.exe  
 
-DNS-IP-Wechsel macht **B** wartungsintensiv. Deshalb ist die Firewall **optional** und der **Proxy der Kern**.
+Because DNS IPs change, **B** requires maintenance. That is why the firewall is **optional** and the **proxy is the core**.
 
-## PowerShell-Skizze (Admin, anpassen!)
+## PowerShell sketch (run as Admin, adapt!)
 
 ```powershell
-# Pfade anpassen
+# Adapt paths
 $grok = "$env:USERPROFILE\.grok\bin\grok.exe"
 
 # Allow localhost proxy
@@ -51,24 +51,24 @@ New-NetFirewallRule -DisplayName "Grok Privacy Allow Local Proxy" `
   -Direction Outbound -Program $grok -Action Allow `
   -RemoteAddress 127.0.0.1 -Protocol TCP -RemotePort 18743
 
-# Allow auth.x.ai — IPs vorher per Resolve-DnsName holen und eintragen
+# Allow auth.x.ai — resolve IPs first and insert them
 # $ips = (Resolve-DnsName auth.x.ai -Type A).IPAddress
 # New-NetFirewallRule ... -RemoteAddress $ips -Protocol TCP -RemotePort 443 -Action Allow
 
-# Block all other outbound for grok (ACHTUNG: nach den Allows)
+# Block all other outbound for grok (CAUTION: after the Allow rules)
 New-NetFirewallRule -DisplayName "Grok Privacy Block Rest" `
   -Direction Outbound -Program $grok -Action Block
 ```
 
-Regeln testen: Login + ein Chat. Wenn Login failt → Auth-Allow prüfen.
+Test the rules: login + one chat. If login fails → check the auth allow rule.
 
 ## macOS / Linux
 
-Analog: `pf`, `iptables`/`nftables` oder Little Snitch / OpenSnitch — nur Loopback:18743 + auth.x.ai:443.
+Analogous: `pf`, `iptables`/`nftables` or Little Snitch / OpenSnitch — allow only loopback:18743 + auth.x.ai:443.
 
-## Deinstallation Firewall
+## Removing the firewall rules
 
-Regeln in der Firewall-UI löschen oder:
+Delete the rules in the Firewall UI or:
 
 ```powershell
 Get-NetFirewallRule -DisplayName "Grok Privacy*" | Remove-NetFirewallRule

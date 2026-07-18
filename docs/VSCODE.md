@@ -1,86 +1,86 @@
 # Grok Privacy Filter — VS Code / Cursor Extension
 
-Für alle, die **nicht** die Terminal-TUI nutzen, sondern **Grok Build in VS Code** (oder Cursor) wie im Chat-Panel.
+For everyone who does **not** use the terminal TUI but works with **Grok Build inside VS Code** (or Cursor) in the chat panel.
 
 ---
 
-## Wichtig: Kein extra CMD-Fenster nötig
+## Important: No extra CMD window required
 
-| Mythos | Realität |
-|--------|----------|
-| „Neues CMD starten“ | Nur für die **Terminal-TUI** (`grok` im Terminal). |
-| **VS Code Extension** | Liest **`~/.grok/config.toml`**. Proxy muss im **Hintergrund** laufen. |
+| Myth | Reality |
+|------|---------|
+| "Start a new CMD" | Only needed for the **terminal TUI** (`grok` in the integrated terminal). |
+| **VS Code Extension** | Reads **`~/.grok/config.toml`**. The proxy must run in the **background**. |
 
-Der Filter greift in der Extension, wenn:
+The filter is active in the extension when:
 
-1. **`[endpoints] cli_chat_proxy_base_url`** auf den lokalen Proxy zeigt, und  
-2. der **Proxy auf Port 18743** läuft, und  
-3. du eine **neue Session** startest (`/new` oder Fenster neu laden) — alte Sessions behalten oft die alte Upstream-URL.
+1. **`[endpoints] cli_chat_proxy_base_url`** points to the local proxy, and
+2. the **proxy is running on port 18743**, and
+3. you start a **new session** (`/new` or reload window) — old sessions often keep the old upstream URL.
 
 ---
 
-## Einmal einrichten (Windows)
+## One-time setup (Windows)
 
-**Ein Befehl (empfohlen):**
-
-```powershell
-cd C:\Pfad\zu\grok-privacy-filter
-powershell -ExecutionPolicy Bypass -File .\scripts\install_all.ps1 -Workspace "C:\Pfad\zu\deinem\Projekt"
-```
-
-Optional mit Watchdog (startet Proxy alle 90s neu, falls abgestürzt):
+**One command (recommended):**
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install_all.ps1 -Workspace "C:\dein\projekt" -WatchdogTask
+cd C:\Path\to\grok-privacy-filter
+powershell -ExecutionPolicy Bypass -File .\scripts\install_all.ps1 -Workspace "C:\Path\to\your\project"
 ```
 
-**Oder schrittweise:**
+Optional with watchdog (restarts proxy every 90s if it crashes):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install_all.ps1 -Workspace "C:\your\project" -WatchdogTask
+```
+
+**Or step by step:**
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1
 py -3 .\config\privacy-opt-out.py
-powershell -ExecutionPolicy Bypass -File .\scripts\install_vscode.ps1 -Workspace "C:\Pfad\zu\deinem\Projekt" -UserSettings
+powershell -ExecutionPolicy Bypass -File .\scripts\install_vscode.ps1 -Workspace "C:\Path\to\your\project" -UserSettings
 powershell -ExecutionPolicy Bypass -File .\scripts\install_autostart.ps1
 # optional: -Watchdog
 ```
 
-### Was `install_vscode.ps1` macht
+### What `install_vscode.ps1` does
 
-| Aktion | Detail |
+| Action | Detail |
 |--------|--------|
-| Proxy-Dateien | nach `~/.grok/proxy/` (inkl. `ensure_proxy.py`) |
-| Config | setzt/ergänzt `cli_chat_proxy_base_url = "http://127.0.0.1:18743/v1"` |
-| `.vscode/tasks.json` | Task **„Grok Privacy: Ensure Filter Proxy“** mit `runOn: folderOpen` |
-| `-UserSettings` | setzt `task.allowAutomaticTasks: "on"` in Code/Cursor User-Settings (Backup `.gpf-backup`) |
-| Sofort | ruft `ensure_proxy.py` auf |
+| Proxy files | copied to `~/.grok/proxy/` (incl. `ensure_proxy.py`) |
+| Config | sets/appends `cli_chat_proxy_base_url = "http://127.0.0.1:18743/v1"` |
+| `.vscode/tasks.json` | Task **"Grok Privacy: Ensure Filter Proxy"** with `runOn: folderOpen` |
+| `-UserSettings` | sets `task.allowAutomaticTasks: "on"` in Code/Cursor user settings (backup `.gpf-backup`) |
+| Immediately | calls `ensure_proxy.py` |
 
-### Was `install_autostart.ps1` macht
+### What `install_autostart.ps1` does
 
-| Aktion | Detail |
+| Action | Detail |
 |--------|--------|
-| Startup-Ordner | `GrokPrivacyFilterProxy.vbs` mit **absolutem Python-Pfad** (kein PATH-Glück) |
-| `-ScheduledTask` | geplante Aufgabe AtLogOn + Restart |
-| `-Watchdog` | zusaetzlich Loop `ensure_proxy --watchdog` alle 90s |
-| `-Remove` | Autostart + Tasks entfernen |
+| Startup folder | `GrokPrivacyFilterProxy.vbs` with **absolute Python path** (no PATH guessing) |
+| `-ScheduledTask` | scheduled task at logon + restart |
+| `-Watchdog` | additional loop `ensure_proxy --watchdog` every 90s |
+| `-Remove` | removes autostart + tasks |
 
-### Deinstallation
+### Uninstallation
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\uninstall.ps1
-# optional endpoints aus config entfernen + Proxy-Prozess:
+# optional endpoints from config + proxy process:
 powershell -ExecutionPolicy Bypass -File .\scripts\uninstall.ps1 -RemoveConfigEndpoints -KillProxy
 ```
 
 ---
 
-## Jeden Tag (nach dem Einrichten)
+## Daily usage (after setup)
 
-1. **PC an** → Autostart startet den Proxy (falls installiert).  
-2. **VS Code öffnen** → beim Ordner-Öffnen läuft die Task erneut (falls erlaubt) und startet den Proxy nur, wenn er **nicht** schon läuft.  
-3. **Grok Extension** → normal chatten.  
-4. Nach Config-Änderung: **`/new`** oder **Reload Window**.
+1. **PC on** → autostart launches the proxy (if installed).
+2. **Open VS Code** → on folder open the task runs again (if allowed) and starts the proxy only if it is **not** already running.
+3. **Grok Extension** → chat normally.
+4. After config changes: **`/new`** or **Reload Window**.
 
-Manuell Proxy erzwingen:
+Force proxy manually:
 
 ```powershell
 py -3 $env:USERPROFILE\.grok\proxy\ensure_proxy.py
@@ -88,7 +88,7 @@ py -3 $env:USERPROFILE\.grok\proxy\ensure_proxy.py
 
 ---
 
-## Config (Kern für die Extension)
+## Config (core for the extension)
 
 In `~/.grok/config.toml`:
 
@@ -97,75 +97,75 @@ In `~/.grok/config.toml`:
 cli_chat_proxy_base_url = "http://127.0.0.1:18743/v1"
 ```
 
-Das ist der Schalter, den **CLI und Extension** für den Chat-Proxy nutzen.  
-Ohne laufenden Proxy: Verbindungen schlagen fehl (Port zu) — dann `ensure_proxy.py`.
+This is the switch used by **both CLI and Extension** for the chat proxy.
+Without a running proxy: connections fail (port closed) — then use `ensure_proxy.py`.
 
-Weitere Härtung: `config/config.snippet.toml` (Telemetry aus, …).
-
----
-
-## Hook in der Extension
-
-Hooks liegen global unter `~/.grok/hooks/` und gelten auch in der Extension.
-
-- Install: `install.ps1`  
-- Prüfen: in Grok **`/hooks-trust`** → dann `/hooks` → Reload **`r`** → `block-xai-upload`  
-- Der Hook blockiert **Agent-Tools** (curl zu xAI etc.), **nicht** den internen Chat-Pfad (dafür der Proxy).
+Additional hardening: `config/config.snippet.toml` (telemetry off, …).
 
 ---
 
-## Automatische Tasks in VS Code
+## Hook in the extension
 
-Beim ersten `folderOpen` kann VS Code fragen, ob Tasks erlaubt sind.
+Hooks live globally under `~/.grok/hooks/` and also apply inside the extension.
 
-- Erlauben, **oder**
-- User-Setting: `"task.allowAutomaticTasks": "on"` (setzt `-UserSettings`)
+- Install: `install.ps1`
+- Verify: in Grok **`/hooks-trust`** → then `/hooks` → reload **`r`** → `block-xai-upload` visible
+- The hook blocks **agent tools** (curl to xAI etc.), **not** the internal chat path (that's what the proxy is for).
 
-Task manuell: **Terminal → Run Task… → „Grok Privacy: Ensure Filter Proxy“**.
+---
 
-Vorlage im Repo: `vscode/tasks.json` (kannst du nach `.vscode/tasks.json` kopieren).
+## Automatic tasks in VS Code
+
+On first `folderOpen`, VS Code may ask whether to allow tasks.
+
+- Allow it, **or**
+- User setting: `"task.allowAutomaticTasks": "on"` (set via `-UserSettings`)
+
+Run task manually: **Terminal → Run Task… → "Grok Privacy: Ensure Filter Proxy"**.
+
+Template in the repo: `vscode/tasks.json` (copy it to `.vscode/tasks.json`).
 
 ---
 
 ## Cursor
 
-Gleiche Mechanismen (`~/.grok/`, Tasks, `ensure_proxy`).  
-`-UserSettings` schreibt auch nach `%APPDATA%\Cursor\User\settings.json`, falls vorhanden.
+Same mechanisms (`~/.grok/`, tasks, `ensure_proxy`).
+`-UserSettings` also writes to `%APPDATA%\Cursor\User\settings.json` when present.
 
 ---
 
 ## Troubleshooting (Extension)
 
-| Symptom | Ursache / Fix |
-|---------|----------------|
-| Chat geht gar nicht | Proxy aus → `ensure_proxy.py`; Port 18743 belegt von anderem Prozess? |
-| Chat geht, aber „ungefiltert“? | Alte Session → `/new`; `cli_chat_proxy_base_url` in config prüfen |
-| Task startet nie | `task.allowAutomaticTasks`; Trust des Workspace |
-| Hook fehlt | `install.ps1`, dann `/hooks-trust`; `/hooks` → r |
-| Nach Reboot tot | `install_autostart.ps1` nachholen |
-| tasks.json überschrieben | Backup: `.vscode/tasks.json.gpf-backup` |
+| Symptom | Cause / Fix |
+|---------|-------------|
+| Chat does not work at all | Proxy off → `ensure_proxy.py`; port 18743 occupied by another process? |
+| Chat works but "unfiltered"? | Old session → `/new`; check `cli_chat_proxy_base_url` in config |
+| Task never starts | `task.allowAutomaticTasks`; trust the workspace |
+| Hook missing | `install.ps1`, then `/hooks-trust`; `/hooks` → `r` |
+| Dead after reboot | re-run `install_autostart.ps1` |
+| tasks.json overwritten | Backup: `.vscode/tasks.json.gpf-backup` |
 
-Logs Proxy:
+Proxy logs:
 
-- `~/.grok/proxy/logs/ensure-proxy-daemon.log`  
-- `~/.grok/proxy/logs/proxy-YYYY-MM-DD.log` (wenn Proxy selbst loggt)  
-- Repo: `logs/proxy-*.log` falls aus Repo gestartet  
-
----
-
-## Abgrenzung Terminal-TUI
-
-| Startart | Brauchst du |
-|----------|-------------|
-| **VS Code Extension** (dieses Doc) | `config.toml` endpoints + `ensure_proxy` / Autostart / folderOpen-Task |
-| **Terminal `grok`** | optional `start_grok_filtered.cmd` **oder** dieselbe `config.toml` endpoints |
-
-Mit gesetzter `cli_chat_proxy_base_url` in der Config brauchst du **kein** `GROK_CLI_CHAT_PROXY_BASE_URL` in der Environment — gilt für CLI und Extension.
+- `~/.grok/proxy/logs/ensure-proxy-daemon.log`
+- `~/.grok/proxy/logs/proxy-YYYY-MM-DD.log` (when the proxy itself logs)
+- Repo: `logs/proxy-*.log` when started from the repo
 
 ---
 
-## Verwandte Docs
+## Terminal TUI vs Extension
 
-- [ANLEITUNG.md](ANLEITUNG.md) — Gesamtablauf  
-- [GRENZEN.md](GRENZEN.md) — was der Proxy nicht kann  
-- [WINDOWS-FIREWALL.md](WINDOWS-FIREWALL.md) — optionale Host-Sperren  
+| Start method | What you need |
+|--------------|---------------|
+| **VS Code Extension** (this doc) | `config.toml` endpoints + `ensure_proxy` / autostart / folderOpen task |
+| **Terminal `grok`** | optional `start_grok_filtered.cmd` **or** the same `config.toml` endpoints |
+
+With `cli_chat_proxy_base_url` set in the config you do **not** need `GROK_CLI_CHAT_PROXY_BASE_URL` in the environment — it applies to both CLI and extension.
+
+---
+
+## Related docs
+
+- [INSTRUCTIONS.md](INSTRUCTIONS.md) — overall flow
+- [LIMITS.md](LIMITS.md) — what the proxy cannot do
+- [WINDOWS-FIREWALL.md](WINDOWS-FIREWALL.md) — optional host blocks

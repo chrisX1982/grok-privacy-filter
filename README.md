@@ -1,68 +1,68 @@
 # Grok Privacy Filter
 
-**Community-Schutzmassnahmen** für die [Grok Build CLI](https://x.ai) (xAI):  
-weniger unnötige Uploads, Coding-Data-Retention **Opt-out**, Agent-Hook, lokaler **Default-Deny-Proxy**.
+**Community hardening** for the [Grok Build CLI](https://x.ai) (xAI):  
+reduced unnecessary uploads, Coding-Data-Retention **opt-out**, agent hook, and a local **default-deny proxy**.
 
-> **Zwei Wege:**
-> - **Einfach (empfohlen für die meisten):** `install_easy.*` + **Live-GUI** (5 Min, ein Schalter)
-> - **Fortgeschritten / VS Code:** `install_all.ps1` + volle Kontrolle
+> **Two paths:**
+> - **Easy (recommended for most users):** `install_easy.*` + **Live GUI** (5 minutes, one toggle)
+> - **Advanced / VS Code:** `install_all.ps1` + full control
 
-> **English (short):** Local tools to harden Grok Build: server-side coding-data retention opt-out, config lockdown, PreToolUse hook against agent uploads, and a path-filtering reverse proxy in front of `cli-chat-proxy.grok.com`. This does **not** stop chat inference (product needs it) and does **not** prove server-side deletion. Full guide: [`docs/ANLEITUNG.md`](docs/ANLEITUNG.md) · Limits: [`docs/GRENZEN.md`](docs/GRENZEN.md).
+> **Deutsch:** Community-Schutzmaßnahmen für die Grok Build CLI. Siehe [README.de.md](README.de.md) für die deutsche Version.
 
 ---
 
-## Warum das existiert
+## Why this exists
 
-Im Juli 2026 wurde öffentlich dokumentiert, dass Grok Build u. a. **Repository-Inhalte** (Git-Bundle) an Cloud-Storage senden konnte — unabhängig davon, welche Dateien der Agent „gelesen“ hat. xAI verwies u. a. auf **`/privacy`**, ZDR (Enterprise) und spätere Server-Flags.
+In July 2026 it became public that Grok Build could send **repository contents** (Git bundles) to cloud storage — regardless of which files the agent had actually "read". xAI pointed to **`/privacy`**, ZDR (Enterprise), and later server-side flags.
 
-Dieses Repo bündelt **sofort nutzbare** Gegenmassnahmen für Einzelpersonen:
+This repository bundles **immediately usable** countermeasures for individuals:
 
-| Schicht | Werkzeug | Wirkung |
-|--------|----------|---------|
+| Layer | Tool | Effect |
+|-------|------|--------|
 | 1 | `config/privacy-opt-out.py` | API: `codingDataRetentionOptOut=true` |
-| 2 | `config/config.snippet.toml` | Telemetry/Trace/Prefetch/Indexing + **endpoints-Proxy** |
-| 3 | `hooks/block-xai-upload.*` | Agent-Tools dürfen nicht zu xAI/GCS pushen |
-| 4 | `proxy/xai_filter_proxy.py` + `ensure_proxy.py` | Default-Deny-Proxy; startet nur wenn nötig |
-| 5 | Autostart / VS Code Task | Proxy bei Login bzw. beim Öffnen des Workspace |
-| 6 | (optional) Firewall | Nur Auth + lokaler Proxy — siehe Docs |
+| 2 | `config/config.snippet.toml` | Disables telemetry/trace/prefetch/indexing + sets **endpoints proxy** |
+| 3 | `hooks/block-xai-upload.*` | Prevents agent tools from pushing to xAI/GCS |
+| 4 | `proxy/xai_filter_proxy.py` + `ensure_proxy.py` | Default-deny proxy; only starts when needed |
+| 5 | Autostart / VS Code Task | Starts proxy at login or when opening the workspace |
+| 6 | (optional) Firewall | Allow only auth + local proxy — see docs |
 
-**Live-GUI (empfohlen für normale Nutzer):** `proxy/live_proxy_gui.py` (wird bei der Installation nach `~/.grok/proxy/` kopiert)
+**Live GUI (recommended for normal users):** `proxy/live_proxy_gui.py` (copied to `~/.grok/proxy/` during install)
 
-- Menüleiste (Datei / Ansicht / Aktionen / Hilfe / Sprache) für sekundäre Funktionen
-- Oben: Status-Anzeigen (PROXY / SCHUTZ), Uhrzeit, Checkbox „Immer oben“
-- Farbiges Banner mit Block-Liste bei aktivem Schutz
-- Log-Bereich mit farbiger Markierung (ALLOW/BLOCK)
-- Unten: Direkte Buttons: Proxy starten, Proxy stoppen, Empfohlene Defaults, Voller Start, Erweitert (umschaltet Modus + Fenstergröße)
-- Statusleiste unten für Feedback
-- Voll bilingual (Deutsch / English), umschaltbar im Menü
-- Einstellungen nur über Menü (Datei → Einstellungen...)
-- Dynamische Pfade, sofortiges visuelles Feedback bei Aktionen, Buttons werden deaktiviert wenn nicht nutzbar
+- Menu bar (File / View / Actions / Help / Language)
+- Top status (PROXY / PROTECTION), clock, "Always on top" checkbox
+- Color banner showing the block list when protection is active
+- Log area with color highlighting (ALLOW/BLOCK)
+- Bottom buttons: Start Proxy, Stop Proxy, Recommended Defaults, Full Start, Advanced (toggles mode + window size)
+- Bottom status bar for feedback
+- Fully bilingual (German / English), switchable in the menu
+- Settings only via menu (File → Settings...)
+- Dynamic paths, instant visual feedback, buttons disable when not applicable
 
-**Preview der Live-GUI:**
+**Live GUI preview:**
 
-![Preview der Live-GUI](Preview_Grok_Privacy_Proxy.PNG)
+![Live GUI preview](Preview_Grok_Privacy_Proxy.PNG)
 
-Start: Doppelklick auf die Desktop-Verknüpfung oder `python proxy/live_proxy_gui.py` (bzw. `~/.grok/proxy/start_live_gui.*`)
+Launch: double-click the desktop shortcut or run `python proxy/live_proxy_gui.py` (or `~/.grok/proxy/start_live_gui.*`)
 
-Das ist der einfache Weg: ein Schalter für den kompletten Exfiltrations-Schutz. Keine 20 Presets.
+This is the simple path: one switch for complete exfiltration protection. No 20 presets.
 
-**Scope (ehrlich):** Filtert Pfade auf `cli-chat-proxy` (Storage/Upload default-deny).  
-Chat/Inference bleibt nutzbar. Blockiert **nicht** magisch alle Hosts der Welt und beweist **keine** Server-Löschung.  
-Siehe [docs/GRENZEN.md](docs/GRENZEN.md).
+**Honest scope:** Filters paths on `cli-chat-proxy` (storage/upload default-deny).  
+Chat/inference stays usable. It does **not** magically block every host on the internet and does **not** prove server-side deletion.  
+See [docs/LIMITS.md](docs/LIMITS.md).
 
-**Kein Marketing:** Firewall auf die ganze `grok.exe` = CLI tot.  
-**Proxy** = CLI/Extension nutzbar + Upload-Pfade auf dem Chat-Host blocken.
+**No marketing speak:** A firewall that blocks all of `grok.exe` kills the CLI.  
+**Proxy** keeps the CLI/extension usable while blocking upload paths on the chat host.
 
 ---
 
-## Schnellstart (5 Minuten)
+## Quick start (5 minutes)
 
-### Voraussetzungen
+### Prerequisites
 
-- Grok Build installiert und einmal `grok login`
-- Python **3.10+** (`python` / `python3` / Windows `py -3`)
+- Grok Build installed and logged in once with `grok login`
+- Python **3.10+** (`python`, `python3`, or Windows `py -3`)
 
-### 1. Einfacher Weg (empfohlen für die **meisten Nutzer**)
+### 1. Easy path (recommended for **most users**)
 
 ```powershell
 git clone https://github.com/chrisX1982/grok-privacy-filter.git
@@ -70,49 +70,48 @@ cd grok-privacy-filter
 powershell -ExecutionPolicy Bypass -File .\scripts\install_easy.ps1
 ```
 
-**Die Live-GUI öffnet sich automatisch.**  
-Klicke „Empfohlene Defaults“ oder „Voller Start“ (empfohlen).  
-Danach immer per Desktop-Verknüpfung „Proxy Live Status“.  
-Sprache umschaltbar im Menü „Sprache“.
+**The Live GUI opens automatically.**  
+Click "Recommended Defaults" or "Full Start" (recommended).  
+Afterwards always launch via the desktop shortcut "Proxy Live Status".  
+Language is switchable via the "Language" menu.
 
-In Grok: `/hooks-trust` (dem lokalen Hook vertrauen).
-Dann `/hooks` öffnen und `r` drücken zum Reload.
-In der GUI: Menü Aktionen → "Hooks prüfen" zum Verifizieren der Installation.
+In Grok: type `/hooks-trust` (trust the local hook).  
+Then open `/hooks` and press `r` to reload.  
+In the GUI: Actions → "Check Hooks" to verify installation.
 
-> **GUI ist der Standard-Einstieg.** Alles andere ist optional für Power-User.
+> **The GUI is the standard entry point.** Everything else is optional for power users.
 
-### Windows — für VS Code / fortgeschrittene Einrichtung
+### Windows — for VS Code / advanced setup
 
 ```powershell
 git clone https://github.com/chrisX1982/grok-privacy-filter.git
 cd grok-privacy-filter
-powershell -ExecutionPolicy Bypass -File .\scripts\install_all.ps1 -Workspace "C:\Pfad\zu\deinem\Projekt"
+powershell -ExecutionPolicy Bypass -File .\scripts\install_all.ps1 -Workspace "C:\Path\to\your\project"
 ```
 
-Danach in Grok: `/hooks-trust` (dem lokalen Hook vertrauen).
-Dann `/hooks` öffnen und `r` drücken zum Reload.
-In der GUI: Menü Aktionen → "Hooks prüfen".
+Then in Grok: `/hooks-trust`, then `/hooks` → `r` to reload.  
+GUI: Actions → "Check Hooks".
 
-| Script | Zweck |
-|--------|--------|
-| **`install_easy.ps1`** / `.sh` | **Empfohlen für die meisten** (Hook + Proxy + GUI + Opt-out + startet GUI) |
-| `install_all.ps1` | Alles in einem Rutsch (inkl. VS Code + Autostart) |
-| `install.ps1` | Hook, Proxy, policy, Config-endpoints |
-| `install_vscode.ps1` | Task folderOpen + User-Settings |
-| `install_autostart.ps1` | Login + optional Watchdog |
-| `ensure_proxy.py` | Start nur wenn noetig; `--watchdog` |
-| `uninstall.ps1` | Sauber entfernen |
+| Script | Purpose |
+|--------|---------|
+| **`install_easy.ps1`** / `.sh` | **Recommended for most** (hook + proxy + GUI + opt-out + starts GUI) |
+| `install_all.ps1` | Everything in one go (incl. VS Code + autostart) |
+| `install.ps1` | Hook, proxy, policy, config endpoints |
+| `install_vscode.ps1` | folderOpen task + user settings |
+| `install_autostart.ps1` | Login + optional watchdog |
+| `ensure_proxy.py` | Starts proxy only if needed; `--watchdog` |
+| `uninstall.ps1` | Clean removal |
 
-### Windows — nur Terminal-TUI (optional)
+### Windows — terminal only (optional)
 
 ```bat
 scripts\start_proxy.cmd
 scripts\start_grok_filtered.cmd
 ```
 
-Mit `cli_chat_proxy_base_url` in der Config reicht oft nur `ensure_proxy` + normales `grok`.
+When using `cli_chat_proxy_base_url` in the config, you often only need `ensure_proxy` + normal `grok`.
 
-### macOS / Linux (einfach)
+### macOS / Linux (easy)
 
 ```bash
 git clone https://github.com/chrisX1982/grok-privacy-filter.git
@@ -120,12 +119,11 @@ cd grok-privacy-filter
 bash scripts/install_easy.sh
 ```
 
-Oder manuell: `bash scripts/install.sh` + opt-out + ensure.
+Or manually: `bash scripts/install.sh` + opt-out + ensure.
 
-# VS Code: docs/VSCODE.md — vscode/tasks.json nach .vscode/ kopieren
-```
+VS Code: see `docs/VSCODE.md` — copy `vscode/tasks.json` into `.vscode/`.
 
-### Prüfen
+### Verification
 
 ```powershell
 # Windows
@@ -133,116 +131,122 @@ powershell -ExecutionPolicy Bypass -File .\scripts\verify.ps1
 ```
 
 ```bash
-curl -i http://127.0.0.1:18743/v1/storage   # erwartet: 403
-curl -i http://127.0.0.1:18743/v1/models    # Upstream (z.B. 401 ohne Token = OK)
+curl -i http://127.0.0.1:18743/v1/storage   # expected: 403
+curl -i http://127.0.0.1:18743/v1/models    # upstream (e.g. 401 without token = OK)
 ```
 
-In Grok: `/hooks` → Reload → **block-xai-upload** aktiv.
+In Grok: `/hooks` → reload → **block-xai-upload** should be active.
 
 ---
 
-## Ordnerstruktur
+## Directory structure
 
 ```text
 grok-privacy-filter/
 ├── README.md
+├── README.de.md
 ├── LICENSE
 ├── config/
-│   ├── config.snippet.toml      ← inkl. [endpoints] Proxy-URL
+│   ├── config.snippet.toml      ← includes [endpoints] proxy URL
 │   └── privacy-opt-out.py
 ├── docs/
-│   ├── ANLEITUNG.md
-│   ├── VSCODE.md                ← Extension-Alltag (kein CMD)
-│   ├── GRENZEN.md
+│   ├── ANLEITUNG.md             ← German
+│   ├── INSTRUCTIONS.md          ← English
+│   ├── GRENZEN.md               ← German
+│   ├── LIMITS.md                ← English
+│   ├── VSCODE.md
 │   ├── WINDOWS-FIREWALL.md
 │   └── GITHUB.md
 ├── hooks/
+│   └── block-xai-upload.*
 ├── proxy/
 │   └── xai_filter_proxy.py
 ├── vscode/
-│   └── tasks.json               ← Vorlage folderOpen → ensure_proxy
+│   └── tasks.json               ← template for folderOpen → ensure_proxy
 └── scripts/
     ├── install.ps1 / install.sh
-    ├── install_vscode.ps1       ← Config + Workspace-Task
+    ├── install_vscode.ps1
     ├── install_autostart.ps1/.sh
-    ├── ensure_proxy.py          ← startet Proxy nur wenn noetig
+    ├── ensure_proxy.py
     ├── start_proxy.* / start_grok_filtered.*
     └── verify.ps1
 ```
 
 ---
 
-## Proxy: Allow / Deny (Kernlogik)
+## Proxy: Allow / Deny (core logic)
 
-**Allow (Prefix):**
+**Allow (prefixes):**
 
 - `/v1/chat/completions`, `/v1/responses`
 - `/v1/models`, `/v1/user`
 - `/v1/privacy/coding-data-retention`
-- `/v1/settings` — **nur GET**
+- `/v1/settings` — **GET only**
 
-**Deny (Datenklau/Exfiltration):**
+**Deny (data exfiltration):**
 
 - `/v1/storage`, `/v1/upload`, `/storage`
 - `/v1/codebase`, `/v1/workspace`, `/v1/sync`
 - `/v1/telemetry`, `/v1/feedback`, `/v1/bundle`, `/v1/trace`
-- **Default-Deny** für alles andere
+- **Default-deny** for everything else
 
-**Live-Steuerung:** Die `live_proxy_gui.py` zeigt Status, Logs und erlaubt direkten Start + einfache Konfiguration (über Menü „Einstellungen“ und „Empfohlene Defaults“ / „Voller Start“). Voll bilingual (DE/EN), umschaltbar. Kein manuelles Edit von policy.json nötig.
+**Live control:** `live_proxy_gui.py` shows status + logs and lets you start/stop + choose presets via menu ("Settings", "Recommended Defaults", "Full Start"). Fully bilingual (DE/EN). No need to manually edit `policy.json`.
 
 Upstream: `https://cli-chat-proxy.grok.com`  
-Lokal: `http://127.0.0.1:18743`  
-Env: `GROK_CLI_CHAT_PROXY_BASE_URL=http://127.0.0.1:18743/v1`
+Local: `http://127.0.0.1:18743`  
+Env var: `GROK_CLI_CHAT_PROXY_BASE_URL=http://127.0.0.1:18743/v1`
 
 ---
 
-## Wichtige CLI-Fakten
+## Important CLI facts
 
-| Befehl | Bedeutung |
-|--------|-----------|
-| `/privacy opt-out` | Privacy-Modus (Retention/Share aus) |
-| `/privacy opt-in` | Daten teilen |
-| nur `/privacy` | oft **leere UI** — Argument nötig |
+| Command | Meaning |
+|---------|---------|
+| `/privacy opt-out` | Privacy mode (retention + sharing off) |
+| `/privacy opt-in` | Share data |
+| `/privacy` alone | often shows **empty UI** — argument is required |
 
-API (mit Session-Token aus `~/.grok/auth.json`):
+API (using session token from `~/.grok/auth.json`):
 
 ```http
 PUT https://cli-chat-proxy.grok.com/v1/privacy/coding-data-retention
 {"codingDataRetentionOptOut": true}
 ```
 
-Formelle Löschung bei xAI: [privacy-portal](https://x.ai/privacy-portal) — **nicht** Teil dieses Tools.
+Official deletion at xAI: [privacy portal](https://x.ai/privacy-portal) — **not** part of this tool.
 
 ---
 
-## Sicherheitshinweise
+## Security notes
 
-- **Niemals** `auth.json`, API-Keys oder Session-Tokens committen.  
-- Opt-out und Proxy sind **keine** Rechtsberatung und **kein** Beweis der Server-Löschung.  
-- Nach Grok-Updates Allowlist und Tests erneut laufen lassen.  
-- Secrets, die je im Repo lagen: **rotieren**.
-
----
-
-## Dokumentation
-
-| Datei | Inhalt |
-|-------|--------|
-| [docs/VSCODE.md](docs/VSCODE.md) | **VS Code / Cursor Extension** — Autostart, Tasks, Config |
-| [docs/ANLEITUNG.md](docs/ANLEITUNG.md) | Vollständige Installations- und Alltagsanleitung |
-| [docs/GRENZEN.md](docs/GRENZEN.md) | Was geht / was nicht |
-| [docs/WINDOWS-FIREWALL.md](docs/WINDOWS-FIREWALL.md) | Optionale Firewall-Allowlist |
+- **Never** commit `auth.json`, API keys, or session tokens.
+- Opt-out and the proxy are **not** legal advice and **do not** prove server-side deletion.
+- After Grok updates, re-run verification and review the allow list.
+- Rotate any secrets that ever lived in a repo.
 
 ---
 
-## Mitwirken / Lizenz
+## Documentation
 
-Pull Requests willkommen (Tests, Allowlist-Updates, Linux-Firewall-Beispiele).  
-Lizenz: **MIT** — siehe [LICENSE](LICENSE).
+| File | Content |
+|------|---------|
+| [docs/VSCODE.md](docs/VSCODE.md) | **VS Code / Cursor Extension** usage — autostart, tasks, config |
+| [docs/INSTRUCTIONS.md](docs/INSTRUCTIONS.md) | Complete installation & daily usage guide (English) |
+| [docs/ANLEITUNG.md](docs/ANLEITUNG.md) | Vollständige Anleitung (German) |
+| [docs/LIMITS.md](docs/LIMITS.md) | What the project can and cannot do (English) |
+| [docs/GRENZEN.md](docs/GRENZEN.md) | Was geht / was nicht (German) |
+| [docs/WINDOWS-FIREWALL.md](docs/WINDOWS-FIREWALL.md) | Optional firewall allow-list |
+
+---
+
+## Contributing / License
+
+Pull requests welcome (tests, allow-list updates, Linux firewall examples).  
+License: **MIT** — see [LICENSE](LICENSE).
 
 ---
 
 ## Disclaimer
 
-Nicht von xAI. Unofficial. Use at your own risk.  
-xAI, Grok und zugehörige Marken gehören den jeweiligen Inhabern.
+Not affiliated with xAI. Unofficial. Use at your own risk.  
+xAI, Grok and related marks belong to their respective owners.

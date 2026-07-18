@@ -1,28 +1,28 @@
-# Repo auf GitHub veröffentlichen
+# Publishing the repository on GitHub
 
-## 1. Neues Repo anlegen
+## 1. Create a new repository
 
-Auf GitHub: **New repository** → z. B. `grok-privacy-filter`  
-**Keine** README/License vom Wizard (liegt schon im Ordner).
+On GitHub: **New repository** → e.g. `grok-privacy-filter`  
+**Do not** let the wizard create a README or License (they already exist in the folder).
 
-## 2. Lokal pushen
+## 2. Push locally
 
 ```bash
-cd /pfad/zu/grok-privacy-filter
+cd /path/to/grok-privacy-filter
 git init
 git add .
-git status   # KEINE auth.json / Tokens
+git status   # DO NOT include auth.json / tokens
 git commit -m "Initial release: Grok privacy filter (proxy, hook, opt-out)"
 git branch -M main
 git remote add origin https://github.com/chrisX1982/grok-privacy-filter.git
 git push -u origin main
 ```
 
-## 3. README anpassen
+## 3. Adjust README
 
-Clone-URL: `https://github.com/chrisX1982/grok-privacy-filter`
+Clone URL: `https://github.com/chrisX1982/grok-privacy-filter`
 
-## 4. Repo-Beschreibung (Vorschlag)
+## 4. Repository description (suggestion)
 
 ```text
 Local privacy hardening for xAI Grok Build CLI: retention opt-out, config lockdown, agent upload hook, default-deny filter proxy.
@@ -30,10 +30,10 @@ Local privacy hardening for xAI Grok Build CLI: retention opt-out, config lockdo
 
 Topics: `grok`, `xai`, `privacy`, `security`, `cli`, `proxy`
 
-## 5. Warnhinweis im About
+## 5. Warning in the About section
 
-Optional: „Unofficial · Not affiliated with xAI“
+Optional: "Unofficial · Not affiliated with xAI"
 
 ## 6. Releases
 
-Tag z. B. `v1.0.0` mit Kurztext aus `CHANGELOG.md`.
+Create a tag e.g. `v1.0.0` with short text taken from `CHANGELOG.md`.
