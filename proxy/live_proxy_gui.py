@@ -24,6 +24,134 @@ import urllib.error
 
 PORT = 18743
 
+# Translations for German and English
+TRANSLATIONS = {
+    'de': {
+        'title': 'PROXY LIVE STATUS — Grok Privacy Filter',
+        'status_ready': 'Bereit',
+        'proxy_status': 'PROXY: ???',
+        'schutz_status': 'SCHUTZ: ???',
+        'always_on_top': 'Immer oben',
+        'start': 'Proxy starten',
+        'stop': 'Proxy stoppen',
+        'defaults': 'Empfohlene Defaults',
+        'full_start': 'Voller Start',
+        'extended': 'Erweitert',
+        'compact': 'Kompakt',
+        'log': 'Log:',
+        'log_compact': 'Log (kompakt)',
+        'menu_file': 'Datei',
+        'menu_settings': 'Einstellungen...',
+        'menu_autostart': 'Autostart einrichten',
+        'menu_close': 'Schließen',
+        'menu_view': 'Ansicht',
+        'menu_toggle_view': 'Erweitert / Kompakt umschalten',
+        'menu_refresh': 'Jetzt aktualisieren',
+        'menu_actions': 'Aktionen',
+        'menu_recommended_defaults': 'Empfohlene Datenschutz-Defaults',
+        'menu_full_protection': 'Mit vollem Schutz starten',
+        'menu_help': 'Hilfe',
+        'menu_about': 'Über',
+        'settings_title': 'Proxy Einstellungen',
+        'welcome_title': 'Willkommen beim Grok Privacy Filter',
+        'welcome_text': 'Schnellstart:\n\n1. Klicke „Empfohlene Defaults“ oder „Voller Start“\n2. Proxy läuft automatisch mit Schutz\n\nDanach siehst du „SCHUTZ AKTIV ✓“.\nDie GUI bleibt offen – du siehst live, was blockiert wird.\nMenü (Datei/Ansicht) für weitere Optionen.\n\nViel Erfolg & sicheres Arbeiten!',
+        'about_title': 'Über Grok Privacy Filter',
+        'about_text': 'Grok Privacy Filter GUI\n\nLokaler Default-Deny-Proxy mit Live-Status.\nVoll transparent und editierbar.\n\nSiehe docs/ANLEITUNG.md und docs/GRENZEN.md',
+        'lang_de': 'Deutsch',
+        'lang_en': 'English',
+        'status_proxy_started': 'Proxy gestartet',
+        'status_proxy_stopping': 'Proxy wird gestoppt...',
+        'status_proxy_starting': 'Proxy wird gestartet...',
+        'status_healthy': 'Proxy healthy',
+        'status_defaults_applied': 'Empfohlene Defaults übernommen',
+        'status_policy_saved': 'Policy gespeichert',
+        'status_full_start': 'Voller Start abgeschlossen',
+        'status_blocked': 'Blockiert: Datei | Code/WS | Uploads | Telemetrie | Feedback | Bundles | Sync',
+        'proxy_running': 'LAEUFT ✓ (Port {port}, PID {pid})',
+        'proxy_stopped': 'GESTOPPT ✗ (Port {port})',
+        'protection_active': 'AKTIV ✓',
+        'protection_inactive': 'NICHT AKTIV ⚠',
+        'protection_error': 'FEHLER',
+        'protection_incomplete': 'Schutz nicht vollständig – siehe Einstellungen',
+        'theft_prevention': 'DATENKLAU VERHINDERN',
+        'data_theft_protection_active': 'Datenklau-Schutz aktiv (blockiert Exfiltration komplett)',
+        'blocks_then': 'Blockiert dann: Dateizugriff • Code/Workspace • Uploads • Telemetrie • Feedback • Bundles • Sync',
+        'prefixes_below': 'Unten die genauen Prefixe (nur bei Bedarf):',
+        'allowed_prefixes': 'Erlaubte Prefixes (allow_prefixes)',
+        'denied_prefixes': 'Verbotene Prefixes (deny_prefixes) - Default-Deny',
+        'further_settings': 'Weitere Einstellungen',
+        'hint_restart': 'Hinweis: Änderungen erfordern meist Proxy-Neustart.',
+        'save': 'Speichern',
+        'cancel': 'Abbrechen',
+        'add': 'Hinzufügen',
+        'remove': 'Entfernen',
+        'saved_title': 'Gespeichert',
+        'saved_text': 'Policy gespeichert.\nProxy neu starten für Übernahme der Änderungen.',
+    },
+    'en': {
+        'title': 'PROXY LIVE STATUS — Grok Privacy Filter',
+        'status_ready': 'Ready',
+        'proxy_status': 'PROXY: ???',
+        'schutz_status': 'PROTECTION: ???',
+        'always_on_top': 'Always on top',
+        'start': 'Start Proxy',
+        'stop': 'Stop Proxy',
+        'defaults': 'Recommended Defaults',
+        'full_start': 'Full Start',
+        'extended': 'Extended',
+        'compact': 'Compact',
+        'log': 'Log:',
+        'log_compact': 'Log (compact)',
+        'menu_file': 'File',
+        'menu_settings': 'Settings...',
+        'menu_autostart': 'Setup autostart',
+        'menu_close': 'Close',
+        'menu_view': 'View',
+        'menu_toggle_view': 'Toggle Extended / Compact',
+        'menu_refresh': 'Refresh now',
+        'menu_actions': 'Actions',
+        'menu_recommended_defaults': 'Recommended Privacy Defaults',
+        'menu_full_protection': 'Start with Full Protection',
+        'menu_help': 'Help',
+        'menu_about': 'About',
+        'settings_title': 'Proxy Settings',
+        'welcome_title': 'Welcome to Grok Privacy Filter',
+        'welcome_text': 'Quick start:\n\n1. Click "Recommended Defaults" or "Full Start"\n2. Proxy starts automatically with protection\n\nYou will then see "PROTECTION ACTIVE ✓".\nThe GUI stays open – you see live what is blocked.\nMenu (File/View) for more options.\n\nGood luck & secure working!',
+        'about_title': 'About Grok Privacy Filter',
+        'about_text': 'Grok Privacy Filter GUI\n\nLocal Default-Deny-Proxy with live status.\nFully transparent and editable.\n\nSee docs/ANLEITUNG.md and docs/GRENZEN.md',
+        'lang_de': 'Deutsch',
+        'lang_en': 'English',
+        'status_proxy_started': 'Proxy started',
+        'status_proxy_stopping': 'Stopping proxy...',
+        'status_proxy_starting': 'Starting proxy...',
+        'status_healthy': 'Proxy healthy',
+        'status_defaults_applied': 'Recommended defaults applied',
+        'status_policy_saved': 'Policy saved',
+        'status_full_start': 'Full start completed',
+        'status_blocked': 'Blocks: file | code/ws | uploads | telemetry | feedback | bundles | sync',
+        'proxy_running': 'RUNNING ✓ (Port {port}, PID {pid})',
+        'proxy_stopped': 'STOPPED ✗ (Port {port})',
+        'protection_active': 'ACTIVE ✓',
+        'protection_inactive': 'NOT ACTIVE ⚠',
+        'protection_error': 'ERROR',
+        'protection_incomplete': 'Protection incomplete – see Settings',
+        'theft_prevention': 'DATA THEFT PREVENTION',
+        'data_theft_protection_active': 'Data theft protection active (blocks exfiltration completely)',
+        'blocks_then': 'Blocks then: file access • code/workspace • uploads • telemetry • feedback • bundles • sync',
+        'prefixes_below': 'Exact prefixes below (only if needed):',
+        'allowed_prefixes': 'Allowed Prefixes (allow_prefixes)',
+        'denied_prefixes': 'Denied Prefixes (deny_prefixes) - Default-Deny',
+        'further_settings': 'Further Settings',
+        'hint_restart': 'Note: Changes usually require proxy restart.',
+        'save': 'Save',
+        'cancel': 'Cancel',
+        'add': 'Add',
+        'remove': 'Remove',
+        'saved_title': 'Saved',
+        'saved_text': 'Policy saved.\nRestart proxy to apply changes.',
+    }
+}
+
 
 def get_grok_home() -> Path:
     """Return ~/.grok (respects GROK_HOME env for tests/advanced setups)."""
@@ -120,9 +248,14 @@ CRITICAL_DATA_THEFT_DENY = [
 class ProxyLiveWindow:
     def __init__(self, root):
         self.root = root
-        self.root.title("PROXY LIVE STATUS — Grok Privacy Filter")
-        self.root.geometry("720x340")
+        self.root.geometry("720x300")
+        self.root.minsize(600, 240)
         self.root.resizable(True, True)
+
+        self.lang = 'de'  # default German, switchable via menu
+        self.menubar = None
+
+        self.root.title(self._tr('title'))
         
         # Dynamic locations (works after install and from source tree)
         self.proxy_dir = get_proxy_dir()
@@ -130,156 +263,134 @@ class ProxyLiveWindow:
         self.proxy_log = get_proxy_log_path()
         self.pidfile = get_pidfile_path()
         
+        self.current_pid = "?"
+        self.protection_active = False
+        
         # Immer oben (kann man togglen) - default aus, damit Dialoge nicht verdeckt werden
         self.always_on_top = tk.BooleanVar(value=False)
         self.root.attributes("-topmost", False)
+
+        # Menubar (reduziert die Anzahl dauerhaft sichtbarer Buttons)
+        self._create_menubar()
+
+        # Main container - cleaner, less "Matrix" dark theme
+        main = tk.Frame(root, bg="#f0f0f0")
+        main.pack(fill="both", expand=True, padx=4, pady=2)
+
+        # Statusbar - make it visible and not dark
+        status_frame = tk.Frame(main, bg="#e0e0e0", height=20)
+        status_frame.pack(fill="x", side="bottom", padx=3, pady=(0,1))
+        status_frame.pack_propagate(False)
+        self.status_bar = tk.Label(
+            status_frame, 
+            text=self._tr('status_ready'), 
+            anchor="w", 
+            font=("TkDefaultFont", 8), 
+            fg="#222222", 
+            bg="#e8e8e8"
+        )
+        self.status_bar.pack(fill="x", padx=4)
+
+        # Header - light, clean, professional
+        header = tk.Frame(main, bg="#e8e8e8")
+        header.pack(fill="x", padx=3, pady=2)
         
-        # Header
-        header = tk.Frame(root, bg="#1e1e1e")
-        header.pack(fill="x", padx=5, pady=5)
+        left = tk.Frame(header, bg="#e8e8e8")
+        left.pack(side="left")
         
         self.status_label = tk.Label(
-            header, 
-            text="PROXY STATUS: ???", 
-            font=("Consolas", 14, "bold"),
-            fg="yellow",
-            bg="#1e1e1e"
+            left, 
+            text=self._tr('proxy_status'), 
+            font=("TkDefaultFont", 9, "bold"),
+            fg="#222222",
+            bg="#e8e8e8"
         )
-        self.status_label.pack(side="left", padx=10)
+        self.status_label.pack(side="left", padx=(5, 10))
         
         self.protection_label = tk.Label(
-            header, 
-            text="DATENKLAU-SCHUTZ: ???", 
-            font=("Consolas", 12, "bold"),
-            fg="yellow",
-            bg="#1e1e1e"
+            left, 
+            text=self._tr('schutz_status'), 
+            font=("TkDefaultFont", 9, "bold"),
+            fg="#222222",
+            bg="#e8e8e8"
         )
-        self.protection_label.pack(side="left", padx=10)
+        self.protection_label.pack(side="left")
+        
+        right = tk.Frame(header, bg="#e8e8e8")
+        right.pack(side="right")
         
         self.time_label = tk.Label(
-            header, 
+            right, 
             text="", 
-            font=("Consolas", 10),
-            fg="#888888",
-            bg="#1e1e1e"
+            font=("TkDefaultFont", 8),
+            fg="#555555",
+            bg="#e8e8e8"
         )
-        self.time_label.pack(side="right", padx=10)
-
-        # Prominenter Datenklau-Banner im Hauptfenster
-        self.datenklau_banner = tk.Label(
-            root,
-            text="",
-            font=("Consolas", 11, "bold"),
-            fg="#00ff00",
-            bg="#003300"
-        )
-        self.datenklau_banner.pack(fill="x", padx=5, pady=(0,5))
-
-        # Extra prominenter Schutz-Indikator (Phase 1 + 4 visuelle Verbesserung)
-        self.protection_frame = tk.Frame(root, bg="#002200", height=34)
-        self.protection_frame.pack(fill="x", padx=5, pady=(0, 4))
-        self.protection_frame.pack_propagate(False)
-        self.protection_big = tk.Label(
-            self.protection_frame,
-            text="DATENKLAU-SCHUTZ STATUS",
-            font=("Consolas", 13, "bold"),
-            fg="#aaffaa",
-            bg="#002200"
-        )
-        self.protection_big.pack(expand=True)
-
-        # Kurzer Willkommens-/Hinweis-Text (Phase 3 + 4)
-        self.welcome_label = tk.Label(
-            root,
-            text="Schnellstart: 'Empfohlene Datenschutz-Defaults' → 'Proxy starten'  |  Alles transparent & editierbar in Einstellungen",
-            font=("Consolas", 9, "bold"),
-            fg="#aaccff",
-            bg="#1e1e1e"
-        )
-        self.welcome_label.pack(fill="x", padx=5, pady=(0,2))
-
-        # Installations-Status (wird beim Start geprüft – Phase 1)
-        self.install_status_label = tk.Label(
-            root,
-            text="",
-            font=("Consolas", 9),
-            fg="#ffaa00",
-            bg="#222222"
-        )
-        self.install_status_label.pack(fill="x", padx=5, pady=(0, 3))
+        self.time_label.pack(side="right", padx=5)
         
         # Checkbox für immer oben
-        top_cb = tk.Checkbutton(
-            header, 
-            text="Immer im Vordergrund", 
+        self.top_cb = tk.Checkbutton(
+            right, 
+            text=self._tr('always_on_top'), 
             variable=self.always_on_top,
             command=self.toggle_topmost,
-            fg="white",
-            bg="#1e1e1e",
-            selectcolor="#333"
+            font=("TkDefaultFont", 8)
         )
-        top_cb.pack(side="right", padx=10)
+        self.top_cb.pack(side="right", padx=5)
+
+        # Buttons - pack BOTTOM frames FIRST (before expanding log) so they don't disappear
+        # Use flat modern style, no dated 2000s borders
+        btn_frame = tk.Frame(main, relief="flat", bd=0)
+        btn_frame.pack(fill="x", side="bottom", padx=3, pady=2)
         
-        # Log Anzeige
-        log_frame = tk.Frame(root)
-        log_frame.pack(fill="both", expand=True, padx=5, pady=5)
+        # Nur direkte Steuer-Buttons in der Leiste.
+        # Alles andere (inkl. Einstellungen, Autostart, Aktualisieren) ist im Menü.
+        # Reihenfolge: 1. Proxy starten, 2. Proxy stoppen, 3. Empfohlene Defaults, 4. Voller Start, 5. Erweitert
+        self.start_btn = tk.Button(btn_frame, text=self._tr('start'), command=self.start_proxy, width=12)
+        self.start_btn.pack(side="left", padx=3, pady=1)
         
-        self.log_label = tk.Label(log_frame, text="Letzte Aktivitaet (Proxy-Log):", fg="#ccc")
+        self.stop_btn = tk.Button(btn_frame, text=self._tr('stop'), command=self.stop_proxy, width=12)
+        self.stop_btn.pack(side="left", padx=3, pady=1)
+        
+        self.defaults_btn = tk.Button(
+            btn_frame,
+            text=self._tr('defaults'),
+            command=self.apply_recommended_defaults,
+            bg="#004400",
+            fg="#aaffaa",
+            activebackground="#006600",
+            width=16
+        )
+        self.defaults_btn.pack(side="left", padx=3, pady=1)
+        
+        self.full_start_btn = tk.Button(btn_frame, text=self._tr('full_start'), command=self.start_everything,
+                  bg="#002244", fg="#aaddff", width=12)
+        self.full_start_btn.pack(side="left", padx=3, pady=1)
+        
+        self.view_btn = tk.Button(btn_frame, text=self._tr('compact'), command=self.toggle_view, width=9)
+        self.view_btn.pack(side="left", padx=3, pady=1)
+        
+        self._update_button_states()
+
+        # Log Anzeige - keep some contrast for readability of colored log lines, but not full Matrix
+        log_frame = tk.Frame(main, bg="#ffffff")
+        log_frame.pack(fill="both", expand=True, padx=3, pady=3)
+        
+        self.log_label = tk.Label(log_frame, text=self._tr('log'), fg="#333", font=("TkDefaultFont", 8))
         self.log_label.pack(anchor="w")
         
         self.log_text = scrolledtext.ScrolledText(
             log_frame, 
             height=22, 
-            font=("Consolas", 9),
-            bg="#1e1e1e",
-            fg="#00ff00",
-            insertbackground="white"
+            font=("TkDefaultFont", 9),
+            bg="#f8f8f8",
+            fg="#000000",
+            insertbackground="#000"
         )
         self.log_text.pack(fill="both", expand=True)
-
-        # Hinweis für Steuerung
-        tk.Label(log_frame, text="Buttons: Start/Stop • Einstellungen • 'Empfohlene Datenschutz-Defaults' (One-Click) • Erweitert", fg="#888").pack(anchor="w")
-        
-        # Buttons
-        btn_frame = tk.Frame(root)
-        btn_frame.pack(fill="x", padx=5, pady=5)
-        
-        tk.Button(btn_frame, text="Proxy starten", command=self.start_proxy).pack(side="left", padx=5)
-        tk.Button(btn_frame, text="Proxy stoppen", command=self.stop_proxy).pack(side="left", padx=5)
-        tk.Button(btn_frame, text="Einstellungen", command=self.open_settings).pack(side="left", padx=5)
-
-        # One-Click-Defaults (Phase 2)
-        btn_defaults = tk.Button(
-            btn_frame,
-            text="Empfohlene Datenschutz-Defaults",
-            command=self.apply_recommended_defaults,
-            bg="#004400",
-            fg="#aaffaa",
-            activebackground="#006600"
-        )
-        btn_defaults.pack(side="left", padx=5)
-
-        # Phase 4: Vollstart + Autostart
-        tk.Button(btn_frame, text="Alles starten (Defaults+Proxy)", command=self.start_everything,
-                  bg="#002244", fg="#aaddff").pack(side="left", padx=5)
-        tk.Button(btn_frame, text="Autostart einrichten", command=self.setup_autostart,
-                  bg="#442200", fg="#ffccaa").pack(side="left", padx=5)
-
-        self.view_btn = tk.Button(btn_frame, text="Erweitert", command=self.toggle_view)
-        self.view_btn.pack(side="left", padx=5)
-        tk.Button(btn_frame, text="Jetzt aktualisieren", command=self.update_now).pack(side="left", padx=5)
-        tk.Button(btn_frame, text="Fenster schließen", command=root.destroy).pack(side="right", padx=5)
-
-        # Initial kompakte Ansicht (kein manuelles Resize nötig)
-        self.log_text.config(height=6)
-        self.view_btn.config(text="Erweitert")
-        self.compact = True
-        self.view_mode_label = tk.Label(btn_frame, text="Modus: Kompakt", font=("Consolas", 9), fg="#888")
-        self.view_mode_label.pack(side="left", padx=5)
         
         # Start auto refresh
         self.running = True
-        self.current_pid = "?"
         self.protection_active = False
         self.compact = True
         self.thread = threading.Thread(target=self.auto_refresh, daemon=True)
@@ -300,14 +411,8 @@ class ProxyLiveWindow:
                 # Nur zeigen, wenn es wirklich der erste Eindruck ist (keine Policy oder keine Logs)
                 if not self.policy_path.is_file() or not self.proxy_log.exists():
                     messagebox.showinfo(
-                        "Willkommen beim Grok Privacy Filter",
-                        "Schnellstart:\n\n"
-                        "1. Klicke „Empfohlene Datenschutz-Defaults“ (oben)\n"
-                        "2. Klicke „Proxy starten“\n\n"
-                        "Danach siehst du oben grün „DATENKLAU-SCHUTZ AKTIV ✓“.\n\n"
-                        "Die GUI bleibt offen – du siehst live, was blockiert wird.\n"
-                        "Alles ist editierbar unter „Einstellungen“.\n\n"
-                        "Viel Erfolg & sicheres Arbeiten!"
+                        self._tr('welcome_title'),
+                        self._tr('welcome_text')
                     )
                 # Flag setzen, damit es nicht wieder kommt
                 flag.parent.mkdir(parents=True, exist_ok=True)
@@ -315,31 +420,145 @@ class ProxyLiveWindow:
         except Exception:
             pass  # nie den Start blockieren
     
+    def _tr(self, key):
+        """Get translated string for current language."""
+        return TRANSLATIONS.get(self.lang, TRANSLATIONS['de']).get(key, key)
+
+    def set_language(self, lang):
+        """Switch language and refresh all UI texts."""
+        if lang not in ('de', 'en'):
+            lang = 'de'
+        self.lang = lang
+        self.refresh_language()
+
+    def refresh_language(self):
+        """Update all visible texts to current language."""
+        # Main window
+        self.root.title(self._tr('title'))
+
+        # Header
+        if hasattr(self, 'status_label'):
+            self.status_label.config(text=self._tr('proxy_status'))
+        if hasattr(self, 'protection_label'):
+            self.protection_label.config(text=self._tr('schutz_status'))
+        if hasattr(self, 'top_cb'):
+            self.top_cb.config(text=self._tr('always_on_top'))
+
+        # Buttons
+        if hasattr(self, 'start_btn'):
+            self.start_btn.config(text=self._tr('start'))
+        if hasattr(self, 'stop_btn'):
+            self.stop_btn.config(text=self._tr('stop'))
+        if hasattr(self, 'defaults_btn'):
+            self.defaults_btn.config(text=self._tr('defaults'))
+        if hasattr(self, 'full_start_btn'):
+            self.full_start_btn.config(text=self._tr('full_start'))
+        if hasattr(self, 'view_btn'):
+            self.view_btn.config(text=self._tr('extended'))
+
+        # Log
+        if hasattr(self, 'log_label'):
+            self.log_label.config(text=self._tr('log'))
+
+        # Status bar
+        if hasattr(self, 'status_bar'):
+            current = self.status_bar.cget('text')
+            if current in ('Bereit', 'Ready', self._tr('status_ready')):
+                self.status_bar.config(text=self._tr('status_ready'))
+
+        # Recreate menubar with new labels
+        if self.menubar:
+            self.menubar.destroy()
+        self._create_menubar()
+
+        # Update dynamic texts
+        self.update_now()
+
     def toggle_topmost(self):
         self.root.attributes("-topmost", self.always_on_top.get())
+
+    def set_status_bar(self, text: str, fg: str = "#888888"):
+        """Zeigt Info in der unteren Statusbar (nicht-modal, platzsparend)."""
+        if hasattr(self, 'status_bar'):
+            self.status_bar.config(text=text, fg=fg)
+
+    def _update_button_states(self):
+        """Enable/disable Start/Stop buttons based on whether proxy is running. Immediate feedback."""
+        try:
+            is_running = bool(
+                self.current_pid and 
+                str(self.current_pid).isdigit() and 
+                self.current_pid != "?"
+            )
+            if is_running:
+                self.start_btn.config(state="disabled")
+                self.stop_btn.config(state="normal")
+            else:
+                self.start_btn.config(state="normal")
+                self.stop_btn.config(state="disabled")
+        except Exception:
+            pass  # buttons may not exist yet during init
+
+    def _show_about(self):
+        messagebox.showinfo(
+            self._tr('about_title'),
+            self._tr('about_text')
+        )
+
+    def _create_menubar(self):
+        """Creates the menubar (with language switch)."""
+        menubar = tk.Menu(self.root)
+
+        # File
+        file_menu = tk.Menu(menubar, tearoff=0)
+        file_menu.add_command(label=self._tr('menu_settings'), command=self.open_settings)
+        file_menu.add_command(label=self._tr('menu_autostart'), command=self.setup_autostart)
+        file_menu.add_separator()
+        file_menu.add_command(label=self._tr('menu_close'), command=self.root.destroy)
+        menubar.add_cascade(label=self._tr('menu_file'), menu=file_menu)
+
+        # View
+        view_menu = tk.Menu(menubar, tearoff=0)
+        view_menu.add_command(label=self._tr('menu_toggle_view'), command=self.toggle_view)
+        view_menu.add_command(label=self._tr('menu_refresh'), command=self.update_now)
+        menubar.add_cascade(label=self._tr('menu_view'), menu=view_menu)
+
+        # Language
+        lang_menu = tk.Menu(menubar, tearoff=0)
+        lang_menu.add_command(label=self._tr('lang_de'), command=lambda: self.set_language('de'))
+        lang_menu.add_command(label=self._tr('lang_en'), command=lambda: self.set_language('en'))
+        menubar.add_cascade(label="Language" if self.lang == 'en' else "Sprache", menu=lang_menu)
+
+        # Actions
+        action_menu = tk.Menu(menubar, tearoff=0)
+        action_menu.add_command(label=self._tr('start'), command=self.start_proxy)
+        action_menu.add_command(label=self._tr('stop'), command=self.stop_proxy)
+        action_menu.add_separator()
+        action_menu.add_command(label=self._tr('menu_recommended_defaults'), command=self.apply_recommended_defaults)
+        action_menu.add_command(label=self._tr('menu_full_protection'), command=self.start_everything)
+        menubar.add_cascade(label=self._tr('menu_actions'), menu=action_menu)
+
+        # Help
+        help_menu = tk.Menu(menubar, tearoff=0)
+        help_menu.add_command(label=self._tr('menu_about'), command=self._show_about)
+        menubar.add_cascade(label=self._tr('menu_help'), menu=help_menu)
+
+        self.root.config(menu=menubar)
+        self.menubar = menubar  # keep ref for language refresh if needed
 
     def toggle_view(self):
         self.compact = not self.compact
         if self.compact:
-            self.log_label.config(text="Log (kompakt)")
+            self.log_label.config(text=self._tr('log_compact'))
             self.log_text.config(height=5)
-            self.datenklau_banner.config(text="Datenklau AKTIV")
-            self.view_btn.config(text="Erweitert")
-            if hasattr(self, 'view_mode_label'):
-                self.view_mode_label.config(text="Modus: Kompakt")
-            self.root.geometry("680x300")
+            self.view_btn.config(text=self._tr('compact'))
+            self.root.geometry("720x280")
             self.root.update_idletasks()
         else:
-            self.log_label.config(text="Letzte Aktivitaet (Proxy-Log):")
+            self.log_label.config(text=self._tr('log'))
             self.log_text.config(height=25)
-            self.datenklau_banner.config(text="✓ BLOCKIERT: Dateizugriff | Code/Workspace | Uploads | Telemetrie | Feedback | Bundles | Sync")
-            if hasattr(self, "protection_big"):
-                # in extended view keep big indicator in sync (color may be from last update_now)
-                pass
-            self.view_btn.config(text="Kompakt")
-            if hasattr(self, 'view_mode_label'):
-                self.view_mode_label.config(text="Modus: Erweitert")
-            self.root.geometry("780x650")
+            self.view_btn.config(text=self._tr('extended'))
+            self.root.geometry("720x450")
             self.root.update_idletasks()
 
     def check_data_theft_protection(self):
@@ -469,16 +688,13 @@ class ProxyLiveWindow:
         return issues
 
     def _update_install_status(self):
+        """Zeigt Installations-Status in der Statusbar (platzsparend)."""
         issues = self._check_installation()
         if not issues:
-            self.install_status_label.config(
-                text=f"✓ Installations-Check OK  |  Proxy-Verzeichnis: {self.proxy_dir}",
-                fg="#88ff88",
-                bg="#003300"
-            )
+            self.set_status_bar(f"✓ Install OK | {self.proxy_dir}", fg="#006600")
         else:
-            txt = "⚠ " + " • ".join(issues) + f"   (Dir: {self.proxy_dir})"
-            self.install_status_label.config(text=txt, fg="#ffaa00", bg="#331100")
+            txt = "⚠ " + " • ".join(issues)
+            self.set_status_bar(txt, fg="#aa0000")
 
     def update_now(self):
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -494,55 +710,37 @@ class ProxyLiveWindow:
             if is_healthy or (listening and pid != "?"):
                 self.current_pid = pid
                 self.status_label.config(
-                    text=f"PROXY STATUS: LAEUFT ✓  (Port {PORT}, PID {pid})", 
-                    fg="#00ff00"
+                    text=self._tr('proxy_status').split(':')[0] + ": " + self._tr('proxy_running').format(port=PORT, pid=pid), 
+                    fg="#006600"
                 )
+                self.set_status_bar(self._tr('status_healthy'), fg="#006600")
+                self._update_button_states()
             else:
                 self.current_pid = "?"
                 self.status_label.config(
-                    text=f"PROXY STATUS: GESTOPPT ✗  (Port {PORT} nicht erreichbar)", 
-                    fg="#ff4444"
+                    text=self._tr('proxy_status').split(':')[0] + ": " + self._tr('proxy_stopped').format(port=PORT), 
+                    fg="#aa0000"
                 )
+                self._update_button_states()
 
             # Datenklau-Schutz Status aktualisieren (einfach & offensichtlich)
             missing = self.check_data_theft_protection()
             if self.protection_active:
                 self.protection_label.config(
-                    text="DATENKLAU-SCHUTZ AKTIV ✓", 
-                    fg="#00ff00"
+                    text=self._tr('schutz_status').split(':')[0] + " " + self._tr('protection_active'), 
+                    fg="#006600"
                 )
-                self.datenklau_banner.config(
-                    text="✓ BLOCKIERT: Dateizugriff | Code/Workspace | Uploads | Telemetrie | Feedback | Bundles | Sync",
-                    bg="#003300",
-                    fg="#00ff00"
-                )
-                if hasattr(self, "protection_big"):
-                    self.protection_big.config(
-                        text="✓ DATENKLAU-SCHUTZ AKTIV — ALLES WICHTIGE BLOCKIERT",
-                        fg="#88ff88",
-                        bg="#002200"
-                    )
-                    self.protection_frame.config(bg="#002200")
+                self.set_status_bar(self._tr('status_blocked'), fg="#006600")
             else:
                 self.protection_label.config(
-                    text="DATENKLAU-SCHUTZ NICHT AKTIV ⚠", 
-                    fg="#ff4444"
+                    text=self._tr('schutz_status').split(':')[0] + " " + self._tr('protection_inactive'), 
+                    fg="#aa0000"
                 )
-                self.datenklau_banner.config(
-                    text="⚠ Datenklau-Schutz nicht vollständig – Einstellungen prüfen",
-                    bg="#330000",
-                    fg="#ff4444"
-                )
-                if hasattr(self, "protection_big"):
-                    self.protection_big.config(
-                        text="⚠ DATENKLAU-SCHUTZ INAKTIV — RISIKO VON EXFILTRATION",
-                        fg="#ffaaaa",
-                        bg="#220000"
-                    )
-                    self.protection_frame.config(bg="#220000")
+                self.set_status_bar(self._tr('protection_incomplete'), fg="#aa0000")
         except Exception as e:
-            self.status_label.config(text=f"FEHLER: {e}", fg="#ff8800")
-            self.protection_label.config(text="DATENKLAU-SCHUTZ: FEHLER", fg="#ff8800")
+            self.status_label.config(text=f"ERROR: {e}" if self.lang == 'en' else f"FEHLER: {e}", fg="#aa0000")
+            self.protection_label.config(text=self._tr('schutz_status').split(':')[0] + " " + self._tr('protection_error'), fg="#aa0000")
+            self.set_status_bar(f"Error: {e}" if self.lang == 'en' else f"Fehler: {e}", fg="#aa0000")
         
         # Log Eintraege (dynamic path)
         if self.proxy_log.exists():
@@ -562,8 +760,8 @@ class ProxyLiveWindow:
                     else:
                         self.log_text.insert("end", line + "\n")
                 
-                self.log_text.tag_config("allow", foreground="#00ff00")
-                self.log_text.tag_config("block", foreground="#ff4444")
+                self.log_text.tag_config("allow", foreground="#006600")
+                self.log_text.tag_config("block", foreground="#aa0000")
                 self.log_text.config(state="disabled")
                 self.log_text.see("end")
             except Exception:
@@ -632,7 +830,7 @@ class ProxyLiveWindow:
                 with open(self.policy_path, "w", encoding="utf-8") as f:
                     json.dump(default, f, indent=2, ensure_ascii=False)
             except Exception as e:
-                messagebox.showwarning("Policy", f"Konnte Policy nicht anlegen: {e}")
+                messagebox.showwarning("Policy" if self.lang == 'en' else "Policy", f"Could not create policy: {e}" if self.lang == 'en' else f"Konnte Policy nicht anlegen: {e}")
 
         missing = self.check_data_theft_protection()
         if not self.protection_active:
@@ -648,7 +846,7 @@ class ProxyLiveWindow:
                     json.dump(policy, f, indent=2, ensure_ascii=False)
                 self.protection_active = True
             except Exception as e:
-                messagebox.showwarning("Datenklau-Schutz", f"Auto-Aktivierung teilweise fehlgeschlagen: {e}")
+                messagebox.showwarning("Data theft protection" if self.lang == 'en' else "Datenklau-Schutz", f"Auto activation partially failed: {e}" if self.lang == 'en' else f"Auto-Aktivierung teilweise fehlgeschlagen: {e}")
 
         # 3. Launch
         py_cmd = self._find_python_cmd()
@@ -664,13 +862,18 @@ class ProxyLiveWindow:
                     start_new_session=True,
                 )
             self._write_pidfile(proc.pid)
-            self.root.after(1800, self.update_now)
-            # gentle follow-up refresh
-            self.root.after(4200, self.update_now)
+            self.current_pid = str(proc.pid)
+            self.set_status_bar(self._tr('status_proxy_starting'), fg="#006600")
+            self._update_button_states()
+            self.update_now()  # immediate feedback
+            self.root.after(1200, self.update_now)
         except Exception as e:
-            self.status_label.config(text=f"START FEHLER: {e}", fg="#ff8800")
+            self.status_label.config(text=f"START ERROR: {e}" if self.lang == 'en' else f"START FEHLER: {e}", fg="#aa0000")
             messagebox.showerror(
-                "Start fehlgeschlagen",
+                "Start failed" if self.lang == 'en' else "Start fehlgeschlagen",
+                f"Could not start proxy.\n\nCommand: {' '.join(py_cmd + [str(proxy_script)])}\n\n"
+                f"Error: {e}\n\nTip: Make sure Python 3.10+ is available ('py -3' or 'python3')."
+                if self.lang == 'en' else
                 f"Konnte Proxy nicht starten.\n\nBefehl: {' '.join(py_cmd + [str(proxy_script)])}\n\n"
                 f"Fehler: {e}\n\nTipp: Python 3.10+ prüfen und 'py -3' oder 'python3' verfügbar machen."
             )
@@ -748,9 +951,10 @@ class ProxyLiveWindow:
                 # Nicht laufend → direkt starten mit Schutz
                 self.start_proxy()
 
+            self.set_status_bar(self._tr('status_defaults_applied'), fg="#006600")
             self.update_now()
         except Exception as e:
-            messagebox.showerror("Fehler beim Übernehmen der Defaults", str(e))
+            messagebox.showerror("Error applying defaults" if self.lang == 'en' else "Fehler beim Übernehmen der Defaults", str(e))
 
     def start_everything(self):
         """Phase 4: Proxy + GUI zusammen / Vollstart mit Schutz."""
@@ -758,7 +962,7 @@ class ProxyLiveWindow:
         if not health_ok("127.0.0.1", PORT):
             self.start_proxy()
         self.update_now()
-        messagebox.showinfo("Vollstart", "Proxy + voller Schutz sind aktiv (oder werden gestartet).")
+        messagebox.showinfo("Full start" if self.lang == 'en' else "Vollstart", "Proxy + recommended full protection settings are active." if self.lang == 'en' else "Proxy + die empfohlenen vollen Schutz-Einstellungen sind aktiv.")
 
     def setup_autostart(self):
         """Phase 4: Autostart direkt aus der GUI einrichten (Windows + Unix)."""
@@ -783,9 +987,9 @@ class ProxyLiveWindow:
                     subprocess.Popen([
                         "powershell", "-ExecutionPolicy", "Bypass", "-File", str(ps1)
                     ], creationflags=subprocess.CREATE_NO_WINDOW)
-                    messagebox.showinfo("Autostart", "Autostart-Installation wurde gestartet.\nProxy sollte beim Login automatisch laufen.")
+                    messagebox.showinfo("Autostart" if self.lang == 'en' else "Autostart", "Autostart setup started.\nProxy should start automatically on login." if self.lang == 'en' else "Autostart-Installation wurde gestartet.\nProxy sollte beim Login automatisch laufen.")
                 else:
-                    messagebox.showinfo("Autostart", "Bitte manuell ausführen:\npowershell -ExecutionPolicy Bypass -File scripts\\install_autostart.ps1")
+                    messagebox.showinfo("Autostart" if self.lang == 'en' else "Autostart", "Please run manually:\npowershell -ExecutionPolicy Bypass -File scripts\\install_autostart.ps1" if self.lang == 'en' else "Bitte manuell ausführen:\npowershell -ExecutionPolicy Bypass -File scripts\\install_autostart.ps1")
             else:
                 # Unix
                 sh = grok_home / "proxy" / "install_autostart.sh"
@@ -797,16 +1001,21 @@ class ProxyLiveWindow:
                 else:
                     messagebox.showinfo("Autostart", "Unter Unix: siehe scripts/install_autostart.sh")
         except Exception as e:
-            messagebox.showerror("Autostart Fehler", str(e))
+            messagebox.showerror("Autostart error" if self.lang == 'en' else "Autostart Fehler", str(e))
 
     def stop_proxy(self):
         pid = self.current_pid or self._read_pidfile()
+        self.set_status_bar(self._tr('status_proxy_stopping'), fg="#aa0000")
+        self.current_pid = "?"
+        self._update_button_states()
+        self.update_now()  # immediate feedback
+
         if pid and pid.isdigit():
             ok = self._kill_by_pid(pid)
             if ok:
                 self._clear_pidfile()
-            self.root.after(1200, self.update_now)
-            self.root.after(2800, self.update_now)
+            self.root.after(1000, self.update_now)
+            self.root.after(2000, self.update_now)
         else:
             # Last resort: try to stop anything listening on the port (Unix friendly)
             try:
@@ -814,7 +1023,7 @@ class ProxyLiveWindow:
                     subprocess.call(["pkill", "-f", "xai_filter_proxy"], stderr=subprocess.DEVNULL)
                 self.root.after(1500, self.update_now)
             except Exception as e:
-                self.status_label.config(text=f"STOP FEHLER: {e}", fg="#ff8800")
+                self.status_label.config(text=f"STOP ERROR: {e}" if self.lang == 'en' else f"STOP FEHLER: {e}", fg="#aa0000")
 
     def open_settings(self):
         """Öffnet ein Einstellungsfenster für die Proxy-Policy.
@@ -825,8 +1034,9 @@ class ProxyLiveWindow:
         self.root.attributes("-topmost", False)
 
         settings_win = tk.Toplevel(self.root)
-        settings_win.title("Proxy Einstellungen")
-        settings_win.geometry("650x580")
+        settings_win.title(self._tr('settings_title'))
+        settings_win.geometry("580x480")
+        settings_win.minsize(520, 420)
         settings_win.resizable(True, True)
 
         # Bring dialog to front
@@ -857,7 +1067,7 @@ class ProxyLiveWindow:
         self._last_loaded_policy = policy  # for save to read allow_get_only safely
 
         # === Datenklau-Schutz – der eine einfache Schalter (keine Presets) ===
-        theft_frame = tk.LabelFrame(settings_win, text="DATENKLAU VERHINDERN", padx=10, pady=6, fg="#cc0000", font=("Consolas", 11, "bold"))
+        theft_frame = tk.LabelFrame(settings_win, text=self._tr('theft_prevention'), padx=10, pady=6, fg="#cc0000", font=("Consolas", 11, "bold"))
         theft_frame.pack(fill="x", padx=10, pady=8)
 
         self.datenklau_var = tk.BooleanVar(value=self.protection_active)
@@ -874,21 +1084,21 @@ class ProxyLiveWindow:
                     self.deny_list.insert("end", p)
 
         tk.Checkbutton(theft_frame, 
-                       text="Datenklau-Schutz aktiv (blockiert Exfiltration komplett)",
+                       text=self._tr('data_theft_protection_active'),
                        variable=self.datenklau_var, command=on_datenklau_toggle,
                        font=("Consolas", 11, "bold"), fg="#990000").pack(anchor="w", pady=2)
 
         tk.Label(theft_frame, 
-                 text="Blockiert dann: Dateizugriff • Code/Workspace auslesen • Uploads • Telemetrie • Feedback • Bundles • Sync",
-                 fg="#333", font=("Consolas", 9)).pack(anchor="w", pady=(2,4))
+                 text=self._tr('blocks_then'),
+                 fg="#333", font=("Consolas", 8), wraplength=500).pack(anchor="w", pady=(2,4))
 
-        tk.Label(theft_frame, text="Unten die genauen Prefixe (nur bei Bedarf):", fg="#666", font=("Consolas", 9)).pack(anchor="w")
+        tk.Label(theft_frame, text=self._tr('prefixes_below'), fg="#666", font=("Consolas", 9)).pack(anchor="w")
 
         # --- Allow Prefixes ---
-        allow_frame = tk.LabelFrame(settings_win, text="Erlaubte Prefixes (allow_prefixes)", padx=8, pady=4)
+        allow_frame = tk.LabelFrame(settings_win, text=self._tr('allowed_prefixes'), padx=8, pady=4)
         allow_frame.pack(fill="x", padx=10, pady=6)
 
-        self.allow_list = tk.Listbox(allow_frame, height=5)
+        self.allow_list = tk.Listbox(allow_frame, height=4)
         self.allow_list.pack(side="left", fill="both", expand=True)
         for p in policy.get("allow_prefixes", []):
             self.allow_list.insert("end", p)
@@ -897,14 +1107,14 @@ class ProxyLiveWindow:
         allow_btns.pack(side="right", padx=4)
         self.allow_entry = tk.Entry(allow_btns, width=30)
         self.allow_entry.pack(pady=2)
-        tk.Button(allow_btns, text="Hinzufügen", command=lambda: self._add_to_list(self.allow_list, self.allow_entry)).pack(fill="x")
-        tk.Button(allow_btns, text="Entfernen", command=lambda: self._remove_from_list(self.allow_list)).pack(fill="x")
+        tk.Button(allow_btns, text=self._tr('add'), command=lambda: self._add_to_list(self.allow_list, self.allow_entry)).pack(fill="x")
+        tk.Button(allow_btns, text=self._tr('remove'), command=lambda: self._remove_from_list(self.allow_list)).pack(fill="x")
 
         # --- Deny Prefixes ---
-        deny_frame = tk.LabelFrame(settings_win, text="Verbotene Prefixes (deny_prefixes) - Default-Deny", padx=8, pady=4)
+        deny_frame = tk.LabelFrame(settings_win, text=self._tr('denied_prefixes'), padx=8, pady=4)
         deny_frame.pack(fill="x", padx=10, pady=6)
 
-        self.deny_list = tk.Listbox(deny_frame, height=6)
+        self.deny_list = tk.Listbox(deny_frame, height=5)
         self.deny_list.pack(side="left", fill="both", expand=True)
         for p in policy.get("deny_prefixes", []):
             self.deny_list.insert("end", p)
@@ -913,11 +1123,11 @@ class ProxyLiveWindow:
         deny_btns.pack(side="right", padx=4)
         self.deny_entry = tk.Entry(deny_btns, width=30)
         self.deny_entry.pack(pady=2)
-        tk.Button(deny_btns, text="Hinzufügen", command=lambda: self._add_to_list(self.deny_list, self.deny_entry)).pack(fill="x")
-        tk.Button(deny_btns, text="Entfernen", command=lambda: self._remove_from_list(self.deny_list)).pack(fill="x")
+        tk.Button(deny_btns, text=self._tr('add'), command=lambda: self._add_to_list(self.deny_list, self.deny_entry)).pack(fill="x")
+        tk.Button(deny_btns, text=self._tr('remove'), command=lambda: self._remove_from_list(self.deny_list)).pack(fill="x")
 
         # --- Weitere Einstellungen ---
-        other_frame = tk.LabelFrame(settings_win, text="Weitere Einstellungen", padx=8, pady=4)
+        other_frame = tk.LabelFrame(settings_win, text=self._tr('further_settings'), padx=8, pady=4)
         other_frame.pack(fill="x", padx=10, pady=6)
 
         self.block_git = tk.BooleanVar(value=policy.get("block_git_bundle_bodies", True))
@@ -942,13 +1152,13 @@ class ProxyLiveWindow:
         self.log_backup.pack(anchor="w")
 
         # Hinweis
-        tk.Label(settings_win, text="Hinweis: Änderungen erfordern in der Regel einen Neustart des Proxys.", fg="#666").pack(pady=6)
+        tk.Label(settings_win, text=self._tr('hint_restart'), fg="#666", font=("Consolas", 8)).pack(pady=4)
 
         # Buttons unten
         btns = tk.Frame(settings_win)
         btns.pack(fill="x", padx=10, pady=8)
-        tk.Button(btns, text="Speichern", command=lambda: self._save_policy(settings_win)).pack(side="left", padx=5)
-        tk.Button(btns, text="Abbrechen", command=settings_win.destroy).pack(side="right", padx=5)
+        tk.Button(btns, text=self._tr('save'), command=lambda: self._save_policy(settings_win)).pack(side="left", padx=5)
+        tk.Button(btns, text=self._tr('cancel'), command=settings_win.destroy).pack(side="right", padx=5)
 
     def _add_to_list(self, lst, entry):
         val = entry.get().strip()
@@ -989,7 +1199,8 @@ class ProxyLiveWindow:
             with open(self.policy_path, "w", encoding="utf-8") as f:
                 json.dump(new_policy, f, indent=2, ensure_ascii=False)
 
-            messagebox.showinfo("Gespeichert", "Policy gespeichert.\nProxy neu starten für Übernahme der Änderungen.")
+            self.set_status_bar(self._tr('status_policy_saved'), fg="#006600")
+            messagebox.showinfo(self._tr('saved_title'), self._tr('saved_text'))
             self.root.attributes("-topmost", self._was_top)  # restore
             win.destroy()
 
@@ -1000,7 +1211,7 @@ class ProxyLiveWindow:
 
             self.update_now()
         except Exception as e:
-            messagebox.showerror("Fehler beim Speichern", str(e))
+            messagebox.showerror("Error saving" if self.lang == 'en' else "Fehler beim Speichern", str(e))
 
     def auto_refresh(self):
         while self.running:

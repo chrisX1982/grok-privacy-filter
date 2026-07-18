@@ -1,18 +1,18 @@
-# Grok Privacy Filter — Einfacher Quick-Install für die meisten Nutzer (empfohlen)
+# Grok Privacy Filter - Einfacher Quick-Install fuer die meisten Nutzer (empfohlen)
 # Macht die wichtigsten Defaults: Hook + Proxy + GUI + Opt-out + Proxy starten
-# Danach wird direkt die Live-GUI geöffnet.
+# Danach wird direkt die Live-GUI geoeffnet.
 #
 # Aufruf:
 #   powershell -ExecutionPolicy Bypass -File .\scripts\install_easy.ps1
 #
-# Für Power-User / VS Code: install_all.ps1 verwenden
+# Fuer Power-User / VS Code: install_all.ps1 verwenden
 
 $ErrorActionPreference = "Stop"
 $RepoRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 Set-Location $RepoRoot
 
-Write-Host "=== Grok Privacy Filter — EINFACHER INSTALL (GUI-fokussiert) ===" -ForegroundColor Cyan
-Write-Host "Dieser Weg ist für die meisten Nutzer gedacht." -ForegroundColor Green
+Write-Host "=== Grok Privacy Filter - EINFACHER INSTALL (GUI-fokussiert) ===" -ForegroundColor Cyan
+Write-Host "Dieser Weg ist fuer die meisten Nutzer gedacht." -ForegroundColor Green
 Write-Host ""
 
 # 1. Kern-Installation (Hook, Proxy-Dateien, GUI, Desktop-Link, Config-Snippet)
@@ -27,8 +27,8 @@ if (Test-Path $optOut) {
     try {
         & py -3 $optOut
     } catch {
-        Write-Warning "Opt-out konnte nicht automatisch ausgeführt werden (Python oder Login?)."
-        Write-Host "   Bitte später manuell: py -3 config\privacy-opt-out.py" -ForegroundColor Yellow
+        Write-Warning "Opt-out konnte nicht automatisch ausgefuehrt werden (Python oder Login?)."
+        Write-Host "   Bitte spaeter manuell: py -3 config\privacy-opt-out.py" -ForegroundColor Yellow
     }
 } else {
     Write-Warning "privacy-opt-out.py nicht gefunden."
@@ -54,9 +54,9 @@ if (Test-Path $guiBat) {
 
 Write-Host ""
 Write-Host "=== Fertig! ===" -ForegroundColor Green
-Write-Host " - Desktop-Verknüpfung 'Proxy Live Status' wurde angelegt (für zukünftige Starts)"
+Write-Host " - Desktop-Verknuepfung 'Proxy Live Status' wurde angelegt (fuer zukuenftige Starts)"
 Write-Host " - Die GUI sollte jetzt offen sein. Proxy + voller Datenklau-Schutz sind aktiv."
 Write-Host " - In Grok: /new  (oder VS Code Window neu laden)"
 Write-Host ""
-Write-Host "Tipp: Für VS Code + Autostart später: scripts\install_all.ps1 verwenden" -ForegroundColor Cyan
-Write-Host "Dokumentation: docs/ANLEITUNG.md  |  Grenzen: docs/GRENZEN.md"
+Write-Host "Tipp: Fuer VS Code + Autostart spaeter: scripts\install_all.ps1 verwenden" -ForegroundColor Cyan
+Write-Host 'Dokumentation: docs/ANLEITUNG.md  |  Grenzen: docs/GRENZEN.md'
