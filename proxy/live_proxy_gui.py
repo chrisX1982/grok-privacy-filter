@@ -29,6 +29,7 @@ TRANSLATIONS = {
     'de': {
         'title': 'PROXY LIVE STATUS — Grok Privacy Filter',
         'status_ready': 'Bereit',
+        'hooks_note': 'Hooks: /hooks-trust ; dann /hooks r',
         'proxy_status': 'PROXY: ???',
         'schutz_status': 'SCHUTZ: ???',
         'always_on_top': 'Immer oben',
@@ -87,10 +88,16 @@ TRANSLATIONS = {
         'remove': 'Entfernen',
         'saved_title': 'Gespeichert',
         'saved_text': 'Policy gespeichert.\nProxy neu starten für Übernahme der Änderungen.',
+        'verify_hooks': 'Hooks prüfen',
+        'hooks_ok': 'Hooks installiert ✓ (in Grok: /hooks-trust ; dann /hooks r)',
+        'hooks_missing': 'Hooks fehlen – Install erneut ausführen',
+        'hooks_found_msg': 'Hook-Dateien gefunden.\n\nIn Grok: /hooks-trust ausführen\nDann /hooks und \'r\' zum Reload. Prüfen dass block-xai-upload aufgelistet und aktiviert ist.',
+        'hooks_missing_msg': 'Hook-Dateien nicht in ~/.grok/hooks/ gefunden.\nBitte install_easy erneut ausführen.',
     },
     'en': {
         'title': 'PROXY LIVE STATUS — Grok Privacy Filter',
         'status_ready': 'Ready',
+        'hooks_note': 'Hooks: /hooks-trust ; then /hooks r',
         'proxy_status': 'PROXY: ???',
         'schutz_status': 'PROTECTION: ???',
         'always_on_top': 'Always on top',
@@ -149,6 +156,11 @@ TRANSLATIONS = {
         'remove': 'Remove',
         'saved_title': 'Saved',
         'saved_text': 'Policy saved.\nRestart proxy to apply changes.',
+        'verify_hooks': 'Verify Hooks',
+        'hooks_ok': 'Hooks installed ✓ (run /hooks-trust in Grok; then /hooks r)',
+        'hooks_missing': 'Hooks missing – re-run install',
+        'hooks_found_msg': 'Hook files found.\n\nIn Grok run: /hooks-trust\nThen /hooks and press \'r\' to reload. Check that block-xai-upload is listed and enabled.',
+        'hooks_missing_msg': 'Hook files not found in ~/.grok/hooks/.\nPlease re-run install_easy.',
     }
 }
 
@@ -399,6 +411,8 @@ class ProxyLiveWindow:
         # Erster Update
         self.update_now()
         self._update_install_status()
+        # Silent check on startup (only status bar, no popup dialog)
+        self.verify_hooks(show_dialog=False)
 
         # Phase 3: Einmaliger Willkommenshinweis beim ersten Start
         self._maybe_show_welcome()
@@ -463,8 +477,8 @@ class ProxyLiveWindow:
         # Status bar
         if hasattr(self, 'status_bar'):
             current = self.status_bar.cget('text')
-            if current in ('Bereit', 'Ready', self._tr('status_ready')):
-                self.status_bar.config(text=self._tr('status_ready'))
+            if current.startswith(self._tr('status_ready')):
+                self.status_bar.config(text= self._tr('status_ready') + " | " + self._tr('hooks_note') )
 
         # Recreate menubar with new labels
         if self.menubar:
@@ -473,6 +487,7 @@ class ProxyLiveWindow:
 
         # Update dynamic texts
         self.update_now()
+        self._update_install_status()  # re-apply install status + hooks note after lang switch
 
     def toggle_topmost(self):
         self.root.attributes("-topmost", self.always_on_top.get())
@@ -505,6 +520,28 @@ class ProxyLiveWindow:
             self._tr('about_text')
         )
 
+    def verify_hooks(self, show_dialog=True):
+        """Check if the block-xai-upload hook files are installed in ~/.grok/hooks/."""
+        hooks_dir = get_grok_home() / "hooks"
+        hook_json = hooks_dir / "block-xai-upload.json"
+        hook_py = hooks_dir / "block-xai-upload.py"
+        health_py = hooks_dir / "proxy_health_session.py"
+
+        if hook_json.exists() and hook_py.exists() and health_py.exists():
+            self.set_status_bar(self._tr('hooks_ok'), fg="#006600")
+            if show_dialog:
+                messagebox.showinfo(
+                    self._tr('verify_hooks'),
+                    self._tr('hooks_found_msg')
+                )
+        else:
+            self.set_status_bar(self._tr('hooks_missing'), fg="#aa0000")
+            if show_dialog:
+                messagebox.showwarning(
+                    self._tr('verify_hooks'),
+                    self._tr('hooks_missing_msg')
+                )
+
     def _create_menubar(self):
         """Creates the menubar (with language switch)."""
         menubar = tk.Menu(self.root)
@@ -536,6 +573,8 @@ class ProxyLiveWindow:
         action_menu.add_separator()
         action_menu.add_command(label=self._tr('menu_recommended_defaults'), command=self.apply_recommended_defaults)
         action_menu.add_command(label=self._tr('menu_full_protection'), command=self.start_everything)
+        action_menu.add_separator()
+        action_menu.add_command(label=self._tr('verify_hooks'), command=self.verify_hooks)
         menubar.add_cascade(label=self._tr('menu_actions'), menu=action_menu)
 
         # Help
@@ -690,10 +729,11 @@ class ProxyLiveWindow:
     def _update_install_status(self):
         """Zeigt Installations-Status in der Statusbar (platzsparend)."""
         issues = self._check_installation()
+        note = " | " + self._tr('hooks_note')
         if not issues:
-            self.set_status_bar(f"✓ Install OK | {self.proxy_dir}", fg="#006600")
+            self.set_status_bar(f"✓ Install OK | {self.proxy_dir}{note}", fg="#006600")
         else:
-            txt = "⚠ " + " • ".join(issues)
+            txt = "⚠ " + " • ".join(issues) + note
             self.set_status_bar(txt, fg="#aa0000")
 
     def update_now(self):
@@ -867,6 +907,7 @@ class ProxyLiveWindow:
             self._update_button_states()
             self.update_now()  # immediate feedback
             self.root.after(1200, self.update_now)
+            self.root.after(1500, lambda: self.verify_hooks(show_dialog=False))  # silent re-check after start
         except Exception as e:
             self.status_label.config(text=f"START ERROR: {e}" if self.lang == 'en' else f"START FEHLER: {e}", fg="#aa0000")
             messagebox.showerror(

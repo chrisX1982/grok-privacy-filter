@@ -57,6 +57,9 @@ Write-Host "=== Fertig! ===" -ForegroundColor Green
 Write-Host " - Desktop-Verknuepfung 'Proxy Live Status' wurde angelegt (fuer zukuenftige Starts)"
 Write-Host " - Die GUI sollte jetzt offen sein. Proxy + voller Datenklau-Schutz sind aktiv."
 Write-Host " - In Grok: /new  (oder VS Code Window neu laden)"
+Write-Host " - Hooks aktivieren: /hooks-trust (lokalem Hook vertrauen)"
+Write-Host " - Dann /hooks öffnen und 'r' zum Reload"
+Write-Host " - In der GUI: Menü Aktionen → 'Hooks prüfen' zum Verifizieren"
 Write-Host ""
 Write-Host "Tipp: Fuer VS Code + Autostart spaeter: scripts\install_all.ps1 verwenden" -ForegroundColor Cyan
 Write-Host 'Dokumentation: docs/ANLEITUNG.md  |  Grenzen: docs/GRENZEN.md'

@@ -49,13 +49,19 @@ Oder ZIP von GitHub laden und entpacken.
 
 3. **In der GUI (einmalig)**
    - Klicke **„Empfohlene Defaults“** oder **„Voller Start“** (empfohlen)
+   - Im Menü „Aktionen → Hooks prüfen“ klicken (prüft Installation)
    - Status zeigt: **SCHUTZ AKTIV ✓** + Banner + Statusleiste
 
 4. **Loslegen**
-   - In Grok einfach `/new` oder VS Code Window neu laden.
+   - In Grok: `/hooks-trust` (dem lokalen Hook vertrauen)
+   - Dann `/hooks` öffnen und `r` drücken zum Reload
+   - Dann `/new` oder VS Code Window neu laden.
    - Danach immer über Desktop-Verknüpfung „Proxy Live Status“ starten.
 
-**Fertig.** Du brauchst keine Configs oder Policy manuell zu editieren.
+**Fertig.** 
+
+Hooks sind installiert. In Grok: `/hooks-trust` eingeben (dem lokalen Hook vertrauen).
+Dann `/hooks` öffnen und `r` drücken zum Reload. Danach siehst du unter `/hooks` den block-xai-upload Eintrag.
 
 ---
 
@@ -164,7 +170,8 @@ Die `live_proxy_gui.py` ist die zentrale, einfache Oberfläche (bilingual DE/EN,
 - Farbiges Banner mit Block-Liste
 - Log mit farbiger Hervorhebung
 - Unten: Direkte Buttons – Proxy starten, Proxy stoppen, Empfohlene Defaults, Voller Start, Erweitert (wechselt Modus + Fenstergröße)
-- Statusleiste unten für Rückmeldungen
+- Statusleiste unten für Rückmeldungen (inkl. Hinweis zu Hooks)
+- Im Menü „Aktionen → Hooks prüfen“: prüft ob Hook-Dateien installiert sind
 - Einstellungen nur über Menü (Datei → Einstellungen...)
 - Sofortiges visuelles Feedback, Buttons werden bei Bedarf deaktiviert
 
@@ -205,9 +212,10 @@ Logs: `~/.grok/proxy/logs/` und ggf. Repo `logs/`.
 ## 6. Hook aktivieren / prüfen
 
 1. Grok starten  
-2. `/hooks` öffnen  
-3. **`r`** = Reload  
-4. Eintrag **block-xai-upload** sichtbar und enabled  
+2. `/hooks-trust` eingeben (dem lokalen Hook vertrauen)  
+3. `/hooks` öffnen  
+4. **`r`** = Reload  
+5. Eintrag **block-xai-upload** sichtbar und enabled  
 
 Test im Chat (Agent soll z. B. ausführen):
 
@@ -296,7 +304,7 @@ Repo-Ordner kann bleiben oder gelöscht werden.
 | Proxy startet nicht | Python 3.10+? Port 18743 frei? |
 | Grok verbindet nicht | Proxy läuft? Env `GROK_CLI_CHAT_PROXY_BASE_URL` gesetzt? |
 | Chat 403 | Allowlist zu eng — Log prüfen, Pfad in `ALLOW_PREFIXES` ergänzen |
-| Hook läuft nicht | `/hooks` reload; Python-Pfad in JSON korrekt? |
+| Hook läuft nicht | `/hooks-trust`; dann `/hooks` → r ; Python-Pfad in JSON korrekt? |
 | Opt-out 401 | Neu `grok login` |
 | VS Code Extension | Env ggf. in der Extension/Terminal-Profile setzen |
 

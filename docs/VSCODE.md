@@ -109,7 +109,7 @@ Weitere Härtung: `config/config.snippet.toml` (Telemetry aus, …).
 Hooks liegen global unter `~/.grok/hooks/` und gelten auch in der Extension.
 
 - Install: `install.ps1`  
-- Prüfen: in Grok **`/hooks`** → Reload **`r`** → `block-xai-upload`  
+- Prüfen: in Grok **`/hooks-trust`** → dann `/hooks` → Reload **`r`** → `block-xai-upload`  
 - Der Hook blockiert **Agent-Tools** (curl zu xAI etc.), **nicht** den internen Chat-Pfad (dafür der Proxy).
 
 ---
@@ -141,7 +141,7 @@ Gleiche Mechanismen (`~/.grok/`, Tasks, `ensure_proxy`).
 | Chat geht gar nicht | Proxy aus → `ensure_proxy.py`; Port 18743 belegt von anderem Prozess? |
 | Chat geht, aber „ungefiltert“? | Alte Session → `/new`; `cli_chat_proxy_base_url` in config prüfen |
 | Task startet nie | `task.allowAutomaticTasks`; Trust des Workspace |
-| Hook fehlt | `install.ps1`, dann `/hooks` → r |
+| Hook fehlt | `install.ps1`, dann `/hooks-trust`; `/hooks` → r |
 | Nach Reboot tot | `install_autostart.ps1` nachholen |
 | tasks.json überschrieben | Backup: `.vscode/tasks.json.gpf-backup` |
 

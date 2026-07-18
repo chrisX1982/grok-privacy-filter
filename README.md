@@ -38,6 +38,10 @@ Dieses Repo bündelt **sofort nutzbare** Gegenmassnahmen für Einzelpersonen:
 - Einstellungen nur über Menü (Datei → Einstellungen...)
 - Dynamische Pfade, sofortiges visuelles Feedback bei Aktionen, Buttons werden deaktiviert wenn nicht nutzbar
 
+**Preview der Live-GUI:**
+
+![Preview der Live-GUI](Preview_Grok_Privacy_Proxy.PNG)
+
 Start: Doppelklick auf die Desktop-Verknüpfung oder `python proxy/live_proxy_gui.py` (bzw. `~/.grok/proxy/start_live_gui.*`)
 
 Das ist der einfache Weg: ein Schalter für den kompletten Exfiltrations-Schutz. Keine 20 Presets.
@@ -71,6 +75,10 @@ Klicke „Empfohlene Defaults“ oder „Voller Start“ (empfohlen).
 Danach immer per Desktop-Verknüpfung „Proxy Live Status“.  
 Sprache umschaltbar im Menü „Sprache“.
 
+In Grok: `/hooks-trust` (dem lokalen Hook vertrauen).
+Dann `/hooks` öffnen und `r` drücken zum Reload.
+In der GUI: Menü Aktionen → "Hooks prüfen" zum Verifizieren der Installation.
+
 > **GUI ist der Standard-Einstieg.** Alles andere ist optional für Power-User.
 
 ### Windows — für VS Code / fortgeschrittene Einrichtung
@@ -81,7 +89,9 @@ cd grok-privacy-filter
 powershell -ExecutionPolicy Bypass -File .\scripts\install_all.ps1 -Workspace "C:\Pfad\zu\deinem\Projekt"
 ```
 
-Danach in Grok: **`/new`** (oder VS Code Window Reload).
+Danach in Grok: `/hooks-trust` (dem lokalen Hook vertrauen).
+Dann `/hooks` öffnen und `r` drücken zum Reload.
+In der GUI: Menü Aktionen → "Hooks prüfen".
 
 | Script | Zweck |
 |--------|--------|
