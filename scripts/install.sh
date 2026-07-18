@@ -96,9 +96,28 @@ echo "Hook: $HOOKS_DIR/block-xai-upload.json"
 
 cp -f "$REPO_ROOT/proxy/xai_filter_proxy.py" "$PROXY_DIR/xai_filter_proxy.py"
 cp -f "$REPO_ROOT/scripts/ensure_proxy.py" "$PROXY_DIR/ensure_proxy.py"
+cp -f "$REPO_ROOT/proxy/live_proxy_gui.py" "$PROXY_DIR/live_proxy_gui.py" 2>/dev/null || true
+cp -f "$REPO_ROOT/scripts/start_live_gui.py" "$PROXY_DIR/start_live_gui.py" 2>/dev/null || true
+cp -f "$REPO_ROOT/scripts/install_autostart.ps1" "$PROXY_DIR/install_autostart.ps1" 2>/dev/null || true
+cp -f "$REPO_ROOT/scripts/install_autostart.sh" "$PROXY_DIR/install_autostart.sh" 2>/dev/null || true
 cp -f "$REPO_ROOT/scripts/start_proxy.sh" "$PROXY_DIR/start_proxy.sh" 2>/dev/null || true
 cp -f "$REPO_ROOT/scripts/start_grok_filtered.sh" "$PROXY_DIR/start_grok_filtered.sh" 2>/dev/null || true
 chmod +x "$PROXY_DIR/"*.sh "$PROXY_DIR/"*.py 2>/dev/null || true
+
+# Simple cross platform launcher for the GUI (Phase 1)
+cat > "$PROXY_DIR/start_live_gui.sh" << 'EOG'
+#!/usr/bin/env bash
+cd "$(dirname "$0")"
+if command -v python3 >/dev/null 2>&1; then
+  exec python3 live_proxy_gui.py "$@"
+elif command -v python >/dev/null 2>&1; then
+  exec python live_proxy_gui.py "$@"
+else
+  echo "Python 3.10+ nicht gefunden."
+  exit 1
+fi
+EOG
+chmod +x "$PROXY_DIR/start_live_gui.sh" 2>/dev/null || true
 
 CONFIG="$GROK_HOME/config.toml"
 if [[ -f "$CONFIG" ]] && ! grep -q 'cli_chat_proxy_base_url' "$CONFIG"; then

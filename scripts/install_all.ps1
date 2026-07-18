@@ -26,6 +26,10 @@ New-Item -ItemType Directory -Force -Path $ProxyDir | Out-Null
 Copy-Item -Force (Join-Path $RepoRoot "proxy\policy.json") (Join-Path $ProxyDir "policy.json")
 Copy-Item -Force (Join-Path $RepoRoot "proxy\xai_filter_proxy.py") (Join-Path $ProxyDir "xai_filter_proxy.py")
 Copy-Item -Force (Join-Path $RepoRoot "scripts\ensure_proxy.py") (Join-Path $ProxyDir "ensure_proxy.py")
+Copy-Item -Force (Join-Path $RepoRoot "proxy\live_proxy_gui.py") (Join-Path $ProxyDir "live_proxy_gui.py") -ErrorAction SilentlyContinue
+Copy-Item -Force (Join-Path $RepoRoot "scripts\start_live_gui.py") (Join-Path $ProxyDir "start_live_gui.py") -ErrorAction SilentlyContinue
+Copy-Item -Force (Join-Path $RepoRoot "scripts\install_autostart.ps1") (Join-Path $ProxyDir "install_autostart.ps1") -ErrorAction SilentlyContinue
+Copy-Item -Force (Join-Path $RepoRoot "scripts\install_autostart.sh") (Join-Path $ProxyDir "install_autostart.sh") -ErrorAction SilentlyContinue
 
 if (-not $SkipOptOut) {
     Write-Host "--- privacy opt-out ---" -ForegroundColor Yellow

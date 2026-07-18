@@ -106,6 +106,36 @@
 
 ---
 
-**Status:** Entwurf – Juli 2026
+**Status:** ✅ **Alle Phasen (1–4) vollständig umgesetzt** (Juli 2026)
+
+### Zusammenfassung der Umsetzung
+
+**Phase 1 – GUI stabilisieren**
+- Alle Pfade dynamisch (`Path.home()`, Skript-Erkennung)
+- Installations-Check beim Start + bessere Fehlermeldungen
+- Prominenter Datenklau-Schutz-Status
+- GUI als eigenständiger Starter (`install_easy`, Desktop-Link, `start_live_gui.*`)
+
+**Phase 2 – Einfacher Nutzungspfad**
+- Neue `scripts/install_easy.ps1` + `.sh` (Hook + Proxy + Opt-out + GUI + Auto-Start)
+- One-Click-Button „Empfohlene Datenschutz-Defaults“ in der GUI
+- GUI klar als Standard-Einstieg positioniert (README + ANLEITUNG)
+
+**Phase 3 – Dokumentation & Onboarding**
+- Zweigleisige Dokumentation in `ANLEITUNG.md`:
+  - Kurzer „Schnellstart für die meisten Nutzer“ (5–10 Min.)
+  - Detaillierte Anleitung für Fortgeschrittene darunter
+- README stark überarbeitet (klare Trennung Einfach vs. Fortgeschritten, GUI prominent)
+- Erststart-Erlebnis in GUI: einmaliger Willkommensdialog + verbesserte Hinweise
+
+**Phase 4 – Nice-to-haves**
+- Visuelle Verbesserungen (größere Status-Frames, Farben, Layout)
+- „Autostart einrichten“-Button direkt in der GUI (Windows + Unix)
+- „Alles starten (Defaults+Proxy)“ für kombinierten Start
+- Transparenz bleibt erhalten (keine Blackbox-Installer)
+
+Alle Änderungen sind optional, editierbar und transparent geblieben.
 
 > Dieser Plan ist als lebendes Dokument gedacht. Er kann bei Bedarf angepasst und erweitert werden.
+>
+> **Abgeschlossen am 2026-07-18** – siehe Git-Commit-Historie für alle Details.

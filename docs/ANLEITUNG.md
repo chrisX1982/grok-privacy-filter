@@ -33,20 +33,59 @@ Oder ZIP von GitHub laden und entpacken.
 
 ---
 
-## 2. Installation
+## Schnellstart für die meisten Nutzer (5–10 Minuten)
 
-### Windows (PowerShell)
+**Ziel:** Mit nur wenigen Schritten vollen Datenschutz aktivieren. Die GUI ist der empfohlene Einstieg.
+
+1. **Repo holen** (oben bereits getan)
+
+2. **Einfachen Installer starten**
+   - **Windows:**  
+     `powershell -ExecutionPolicy Bypass -File .\scripts\install_easy.ps1`
+   - **macOS / Linux:**  
+     `bash scripts/install_easy.sh`
+
+   → Die **Live-GUI** öffnet sich automatisch.
+
+3. **In der GUI (einmalig)**
+   - Klicke **„Empfohlene Datenschutz-Defaults“**
+   - Klicke **„Proxy starten“**
+   - Status zeigt: **DATENKLAU-SCHUTZ AKTIV ✓** + grüner Balken
+
+4. **Loslegen**
+   - In Grok einfach `/new` oder VS Code Window neu laden.
+   - Danach immer über Desktop-Verknüpfung „Proxy Live Status“ starten.
+
+**Fertig.** Du brauchst keine Configs oder Policy manuell zu editieren.
+
+---
+
+## Detaillierte Anleitung (für Fortgeschrittene)
+
+Die folgenden Abschnitte sind die vollständige Anleitung mit allen Optionen, Hintergründen und manuellen Schritten.
+
+## 2. Installation (detailliert)
+
+### Windows (PowerShell) — Einfach (empfohlen)
 
 ```powershell
 cd C:\Pfad\zu\grok-privacy-filter
-powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\install_easy.ps1
 ```
 
-### macOS / Linux
+Die Live-GUI öffnet sich. Verwende danach die Desktop-Verknüpfung.
+
+### Windows — Vollständig (VS Code + Autostart)
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install_all.ps1 -Workspace "C:\Pfad\zu\deinem\Projekt"
+```
+
+### macOS / Linux — Einfach (empfohlen)
 
 ```bash
 cd /pfad/zu/grok-privacy-filter
-bash scripts/install.sh
+bash scripts/install_easy.sh
 ```
 
 ### Was der Installer macht

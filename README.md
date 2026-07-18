@@ -3,6 +3,10 @@
 **Community-Schutzmassnahmen** für die [Grok Build CLI](https://x.ai) (xAI):  
 weniger unnötige Uploads, Coding-Data-Retention **Opt-out**, Agent-Hook, lokaler **Default-Deny-Proxy**.
 
+> **Zwei Wege:**
+> - **Einfach (empfohlen für die meisten):** `install_easy.*` + **Live-GUI** (5 Min, ein Schalter)
+> - **Fortgeschritten / VS Code:** `install_all.ps1` + volle Kontrolle
+
 > **English (short):** Local tools to harden Grok Build: server-side coding-data retention opt-out, config lockdown, PreToolUse hook against agent uploads, and a path-filtering reverse proxy in front of `cli-chat-proxy.grok.com`. This does **not** stop chat inference (product needs it) and does **not** prove server-side deletion. Full guide: [`docs/ANLEITUNG.md`](docs/ANLEITUNG.md) · Limits: [`docs/GRENZEN.md`](docs/GRENZEN.md).
 
 ---
@@ -22,15 +26,17 @@ Dieses Repo bündelt **sofort nutzbare** Gegenmassnahmen für Einzelpersonen:
 | 5 | Autostart / VS Code Task | Proxy bei Login bzw. beim Öffnen des Workspace |
 | 6 | (optional) Firewall | Nur Auth + lokaler Proxy — siehe Docs |
 
-**Live-GUI (empfohlen für normale Nutzer):** `proxy/live_proxy_gui.py`
+**Live-GUI (empfohlen für normale Nutzer):** `proxy/live_proxy_gui.py` (wird bei der Installation nach `~/.grok/proxy/` kopiert)
 
 - Proxy starten/stoppen per Button (startet automatisch mit vollem Datenklau-Schutz)
 - Ein-Klick „Datenklau-Schutz aktiv“ → blockiert **wirklich alles** was Datenklau ermöglicht:
   Dateizugriff, Code/Workspace auslesen, Uploads, Telemetrie, Feedback, Bundles, Sync
 - Einstellungen im Fenster (keine Policy.json mehr von Hand)
-- Deutliche Anzeige: „DATENKLAU-SCHUTZ AKTIV ✓ – Blockiert: ...“
+- Deutliche Anzeige: „DATENKLAU-SCHUTZ AKTIV ✓ – Blockiert: ...“ (prominenter Status + Installations-Check)
+- Dynamische Pfade (funktioniert auf jedem PC ohne Code-Änderung)
+- Desktop-Verknüpfung "Proxy Live Status" + `start_live_gui.bat` / `.sh`
 
-Start: Doppelklick auf die .bat oder `python proxy/live_proxy_gui.py`
+Start: Doppelklick auf die Desktop-Verknüpfung oder `python proxy/live_proxy_gui.py` (bzw. `~/.grok/proxy/start_live_gui.*`)
 
 Das ist der einfache Weg: ein Schalter für den kompletten Exfiltrations-Schutz. Keine 20 Presets.
 
@@ -50,7 +56,21 @@ Siehe [docs/GRENZEN.md](docs/GRENZEN.md).
 - Grok Build installiert und einmal `grok login`
 - Python **3.10+** (`python` / `python3` / Windows `py -3`)
 
-### Windows — empfohlen wenn du in **VS Code** arbeitest
+### 1. Einfacher Weg (empfohlen für die **meisten Nutzer**)
+
+```powershell
+git clone https://github.com/chrisX1982/grok-privacy-filter.git
+cd grok-privacy-filter
+powershell -ExecutionPolicy Bypass -File .\scripts\install_easy.ps1
+```
+
+**Die Live-GUI öffnet sich automatisch.**  
+Klicke „Empfohlene Datenschutz-Defaults“ → „Proxy starten“.  
+Danach immer per Desktop-Verknüpfung „Proxy Live Status“.
+
+> **GUI ist der Standard-Einstieg.** Alles andere ist optional für Power-User.
+
+### Windows — für VS Code / fortgeschrittene Einrichtung
 
 ```powershell
 git clone https://github.com/chrisX1982/grok-privacy-filter.git
@@ -62,7 +82,8 @@ Danach in Grok: **`/new`** (oder VS Code Window Reload).
 
 | Script | Zweck |
 |--------|--------|
-| **`install_all.ps1`** | Alles in einem Rutsch |
+| **`install_easy.ps1`** / `.sh` | **Empfohlen für die meisten** (Hook + Proxy + GUI + Opt-out + startet GUI) |
+| `install_all.ps1` | Alles in einem Rutsch (inkl. VS Code + Autostart) |
 | `install.ps1` | Hook, Proxy, policy, Config-endpoints |
 | `install_vscode.ps1` | Task folderOpen + User-Settings |
 | `install_autostart.ps1` | Login + optional Watchdog |
@@ -78,15 +99,16 @@ scripts\start_grok_filtered.cmd
 
 Mit `cli_chat_proxy_base_url` in der Config reicht oft nur `ensure_proxy` + normales `grok`.
 
-### macOS / Linux
+### macOS / Linux (einfach)
 
 ```bash
 git clone https://github.com/chrisX1982/grok-privacy-filter.git
 cd grok-privacy-filter
-bash scripts/install.sh
-python3 config/privacy-opt-out.py
-bash scripts/install_autostart.sh
-python3 ~/.grok/proxy/ensure_proxy.py
+bash scripts/install_easy.sh
+```
+
+Oder manuell: `bash scripts/install.sh` + opt-out + ensure.
+
 # VS Code: docs/VSCODE.md — vscode/tasks.json nach .vscode/ kopieren
 ```
 
