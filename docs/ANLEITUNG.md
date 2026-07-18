@@ -48,9 +48,8 @@ Oder ZIP von GitHub laden und entpacken.
    → Die **Live-GUI** öffnet sich automatisch.
 
 3. **In der GUI (einmalig)**
-   - Klicke **„Empfohlene Datenschutz-Defaults“**
-   - Klicke **„Proxy starten“**
-   - Status zeigt: **DATENKLAU-SCHUTZ AKTIV ✓** + grüner Balken
+   - Klicke **„Empfohlene Defaults“** oder **„Voller Start“** (empfohlen)
+   - Status zeigt: **SCHUTZ AKTIV ✓** + Banner + Statusleiste
 
 4. **Loslegen**
    - In Grok einfach `/new` oder VS Code Window neu laden.
@@ -158,12 +157,16 @@ Danach: **neue Grok-Session**.
 
 ## 5. Filter-Proxy + Live-GUI (empfohlen)
 
-Die `live_proxy_gui.py` ist die zentrale, einfache Oberfläche:
+Die `live_proxy_gui.py` ist die zentrale, einfache Oberfläche (bilingual DE/EN, umschaltbar im Menü „Sprache“):
 
-- Proxy per Button starten/stoppen  
-- Ein Häkchen „Datenklau-Schutz aktiv“ → blockiert **wirklich alles** was Datenklau ermöglicht (Storage, Codebase, Telemetrie, Feedback, Uploads, Bundles, Sync …)  
-- Einstellungen direkt im Fenster (keine policy.json mehr von Hand)  
-- Oben steht sofort „DATENKLAU-SCHUTZ AKTIV ✓“ + klare Liste der blockierten Kategorien
+- Menüleiste (Datei, Ansicht, Aktionen, Hilfe, Sprache)
+- Oben: Statuszeilen (PROXY / SCHUTZ), Uhrzeit, „Immer oben“
+- Farbiges Banner mit Block-Liste
+- Log mit farbiger Hervorhebung
+- Unten: Direkte Buttons – Proxy starten, Proxy stoppen, Empfohlene Defaults, Voller Start, Erweitert (wechselt Modus + Fenstergröße)
+- Statusleiste unten für Rückmeldungen
+- Einstellungen nur über Menü (Datei → Einstellungen...)
+- Sofortiges visuelles Feedback, Buttons werden bei Bedarf deaktiviert
 
 Start:
 ```powershell
@@ -193,7 +196,7 @@ scripts\start_proxy_silent.vbs   # Proxy unsichtbar, GUI sichtbar
 ```
 
 **Für die meisten Nutzer reicht die Live-GUI.**  
-Ein Schalter, Start per Button, sofort sichtbar dass Datenklau blockiert ist. Kein manuelles Edit von Prefixen nötig.
+Klare Buttons + Menü, sofort sichtbar ob Schutz aktiv ist (Banner + Status). Kein manuelles Edit von Prefixen nötig.
 
 Logs: `~/.grok/proxy/logs/` und ggf. Repo `logs/`.
 
@@ -260,12 +263,12 @@ Für formelle Löschung:
 
 ```text
 1. Live-GUI starten (Desktop-Shortcut oder python proxy\live_proxy_gui.py)
-2. Proxy-Button klicken (Datenklau-Schutz ist automatisch an)
+2. „Voller Start“ oder „Proxy starten“ + „Empfohlene Defaults“
 3. Arbeiten
-4. In der GUI siehst du sofort Status + Blocks
+4. In der GUI siehst du sofort Status + Blocks (Banner + Statusleiste)
 ```
 
-Die GUI ist die einfache, sichtbare Kontrolle. Kein manuelles Rumfummeln in Configs.
+Die GUI ist die einfache, sichtbare Kontrolle. Kein manuelles Rumfummeln in Configs. Menü für alles Weitere.
 
 ---
 

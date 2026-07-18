@@ -28,13 +28,15 @@ Dieses Repo bündelt **sofort nutzbare** Gegenmassnahmen für Einzelpersonen:
 
 **Live-GUI (empfohlen für normale Nutzer):** `proxy/live_proxy_gui.py` (wird bei der Installation nach `~/.grok/proxy/` kopiert)
 
-- Proxy starten/stoppen per Button (startet automatisch mit vollem Datenklau-Schutz)
-- Ein-Klick „Datenklau-Schutz aktiv“ → blockiert **wirklich alles** was Datenklau ermöglicht:
-  Dateizugriff, Code/Workspace auslesen, Uploads, Telemetrie, Feedback, Bundles, Sync
-- Einstellungen im Fenster (keine Policy.json mehr von Hand)
-- Deutliche Anzeige: „DATENKLAU-SCHUTZ AKTIV ✓ – Blockiert: ...“ (prominenter Status + Installations-Check)
-- Dynamische Pfade (funktioniert auf jedem PC ohne Code-Änderung)
-- Desktop-Verknüpfung "Proxy Live Status" + `start_live_gui.bat` / `.sh`
+- Menüleiste (Datei / Ansicht / Aktionen / Hilfe / Sprache) für sekundäre Funktionen
+- Oben: Status-Anzeigen (PROXY / SCHUTZ), Uhrzeit, Checkbox „Immer oben“
+- Farbiges Banner mit Block-Liste bei aktivem Schutz
+- Log-Bereich mit farbiger Markierung (ALLOW/BLOCK)
+- Unten: Direkte Buttons: Proxy starten, Proxy stoppen, Empfohlene Defaults, Voller Start, Erweitert (umschaltet Modus + Fenstergröße)
+- Statusleiste unten für Feedback
+- Voll bilingual (Deutsch / English), umschaltbar im Menü
+- Einstellungen nur über Menü (Datei → Einstellungen...)
+- Dynamische Pfade, sofortiges visuelles Feedback bei Aktionen, Buttons werden deaktiviert wenn nicht nutzbar
 
 Start: Doppelklick auf die Desktop-Verknüpfung oder `python proxy/live_proxy_gui.py` (bzw. `~/.grok/proxy/start_live_gui.*`)
 
@@ -65,8 +67,9 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install_easy.ps1
 ```
 
 **Die Live-GUI öffnet sich automatisch.**  
-Klicke „Empfohlene Datenschutz-Defaults“ → „Proxy starten“.  
-Danach immer per Desktop-Verknüpfung „Proxy Live Status“.
+Klicke „Empfohlene Defaults“ oder „Voller Start“ (empfohlen).  
+Danach immer per Desktop-Verknüpfung „Proxy Live Status“.  
+Sprache umschaltbar im Menü „Sprache“.
 
 > **GUI ist der Standard-Einstieg.** Alles andere ist optional für Power-User.
 
@@ -175,7 +178,7 @@ grok-privacy-filter/
 - `/v1/telemetry`, `/v1/feedback`, `/v1/bundle`, `/v1/trace`
 - **Default-Deny** für alles andere
 
-**Live-Steuerung:** Die `live_proxy_gui.py` zeigt Status, Logs und erlaubt direkten Start + einfache Konfiguration des **Datenklau-Schutzes** (Checkbox „Datenklau-Schutz aktiv“ setzt alle kritischen Blöcke). Kein manuelles Edit von policy.json nötig.
+**Live-Steuerung:** Die `live_proxy_gui.py` zeigt Status, Logs und erlaubt direkten Start + einfache Konfiguration (über Menü „Einstellungen“ und „Empfohlene Defaults“ / „Voller Start“). Voll bilingual (DE/EN), umschaltbar. Kein manuelles Edit von policy.json nötig.
 
 Upstream: `https://cli-chat-proxy.grok.com`  
 Lokal: `http://127.0.0.1:18743`  
