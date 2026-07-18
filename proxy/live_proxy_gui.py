@@ -36,13 +36,12 @@ class ProxyLiveWindow:
     def __init__(self, root):
         self.root = root
         self.root.title("PROXY LIVE STATUS")
-        self.root.geometry("700x420")
+        self.root.geometry("600x280")
         self.root.resizable(True, True)
         
-        # Immer oben (kann man togglen)
-        self.always_on_top = tk.BooleanVar(value=True)
-        self.root.attributes("-topmost", True)
-        self.root.geometry("550x320")
+        # Immer oben (kann man togglen) - default aus, damit Dialoge nicht verdeckt werden
+        self.always_on_top = tk.BooleanVar(value=False)
+        self.root.attributes("-topmost", False)
         
         # Header
         header = tk.Frame(root, bg="#1e1e1e")
@@ -101,11 +100,12 @@ class ProxyLiveWindow:
         log_frame = tk.Frame(root)
         log_frame.pack(fill="both", expand=True, padx=5, pady=5)
         
-        tk.Label(log_frame, text="Letzte Aktivitaet (Proxy-Log):", fg="#ccc").pack(anchor="w")
+        self.log_label = tk.Label(log_frame, text="Letzte Aktivitaet (Proxy-Log):", fg="#ccc")
+        self.log_label.pack(anchor="w")
         
         self.log_text = scrolledtext.ScrolledText(
             log_frame, 
-            height=16, 
+            height=22, 
             font=("Consolas", 9),
             bg="#1e1e1e",
             fg="#00ff00",
@@ -123,13 +123,23 @@ class ProxyLiveWindow:
         tk.Button(btn_frame, text="Proxy starten", command=self.start_proxy).pack(side="left", padx=5)
         tk.Button(btn_frame, text="Proxy stoppen", command=self.stop_proxy).pack(side="left", padx=5)
         tk.Button(btn_frame, text="Einstellungen", command=self.open_settings).pack(side="left", padx=5)
+        self.view_btn = tk.Button(btn_frame, text="Erweitert", command=self.toggle_view)
+        self.view_btn.pack(side="left", padx=5)
         tk.Button(btn_frame, text="Jetzt aktualisieren", command=self.update_now).pack(side="left", padx=5)
         tk.Button(btn_frame, text="Fenster schließen", command=root.destroy).pack(side="right", padx=5)
+
+        # Initial kompakte Ansicht (kein manuelles Resize nötig)
+        self.log_text.config(height=6)
+        self.view_btn.config(text="Erweitert")
+        self.compact = True
+        self.view_mode_label = tk.Label(btn_frame, text="Modus: Kompakt", font=("Consolas", 9), fg="#888")
+        self.view_mode_label.pack(side="left", padx=5)
         
         # Start auto refresh
         self.running = True
         self.current_pid = "?"
         self.protection_active = False
+        self.compact = True
         self.thread = threading.Thread(target=self.auto_refresh, daemon=True)
         self.thread.start()
         
@@ -138,6 +148,27 @@ class ProxyLiveWindow:
     
     def toggle_topmost(self):
         self.root.attributes("-topmost", self.always_on_top.get())
+
+    def toggle_view(self):
+        self.compact = not self.compact
+        if self.compact:
+            self.log_label.config(text="Log (kompakt)")
+            self.log_text.config(height=5)
+            self.datenklau_banner.config(text="Datenklau AKTIV")
+            self.view_btn.config(text="Erweitert")
+            if hasattr(self, 'view_mode_label'):
+                self.view_mode_label.config(text="Modus: Kompakt")
+            self.root.geometry("600x260")
+            self.root.update_idletasks()
+        else:
+            self.log_label.config(text="Letzte Aktivitaet (Proxy-Log):")
+            self.log_text.config(height=25)
+            self.datenklau_banner.config(text="✓ BLOCKIERT: Dateizugriff | Code/Workspace | Uploads | Telemetrie | Feedback | Bundles | Sync")
+            self.view_btn.config(text="Kompakt")
+            if hasattr(self, 'view_mode_label'):
+                self.view_mode_label.config(text="Modus: Erweitert")
+            self.root.geometry("750x580")
+            self.root.update_idletasks()
 
     def check_data_theft_protection(self):
         """Prüft, ob alle kritischen Datenklau-Pfade in deny_prefixes sind."""
@@ -218,7 +249,7 @@ class ProxyLiveWindow:
         if os.path.exists(PROXY_LOG):
             try:
                 with open(PROXY_LOG, "r", encoding="utf-8", errors="ignore") as f:
-                    lines = f.readlines()[-10:]  # letzte 10 Zeilen
+                    lines = f.readlines()[-25:]  # mehr Zeilen für bessere Übersicht
                 
                 self.log_text.config(state="normal")
                 self.log_text.delete("1.0", "end")
@@ -284,10 +315,24 @@ class ProxyLiveWindow:
         """Öffnet ein Einstellungsfenster für die Proxy-Policy.
         Fokus: Einfache Kontrolle gegen Datenklau (Exfiltration).
         """
+        # Temporär topmost deaktivieren, damit Einstellungen-Dialog nicht verdeckt wird
+        self._was_top = self.root.attributes("-topmost")
+        self.root.attributes("-topmost", False)
+
         settings_win = tk.Toplevel(self.root)
         settings_win.title("Proxy Einstellungen")
         settings_win.geometry("650x580")
         settings_win.resizable(True, True)
+
+        # Bring dialog to front
+        settings_win.lift()
+        settings_win.focus_force()
+
+        def on_settings_close():
+            self.root.attributes("-topmost", self._was_top)
+            settings_win.destroy()
+
+        settings_win.protocol("WM_DELETE_WINDOW", on_settings_close)
 
         # Policy laden
         policy_path = r"C:\Users\chris\.grok\proxy\policy.json"
@@ -432,6 +477,7 @@ class ProxyLiveWindow:
                 json.dump(new_policy, f, indent=2, ensure_ascii=False)
 
             messagebox.showinfo("Gespeichert", "Policy gespeichert.\nProxy neu starten für Übernahme der Änderungen.")
+            self.root.attributes("-topmost", self._was_top)  # restore
             win.destroy()
 
             # Wenn Proxy läuft → automatisch neu starten

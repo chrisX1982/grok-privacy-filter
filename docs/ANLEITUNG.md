@@ -117,62 +117,44 @@ Danach: **neue Grok-Session**.
 
 ---
 
-## 5. Filter-Proxy + VS Code / Autostart
+## 5. Filter-Proxy + Live-GUI (empfohlen)
 
-### 5a. Empfohlen: ensure_proxy (idempotent)
+Die `live_proxy_gui.py` ist die zentrale, einfache Oberfläche:
 
-```bash
-# Windows
-py -3 %USERPROFILE%\.grok\proxy\ensure_proxy.py
+- Proxy per Button starten/stoppen  
+- Ein Häkchen „Datenklau-Schutz aktiv“ → blockiert **wirklich alles** was Datenklau ermöglicht (Storage, Codebase, Telemetrie, Feedback, Uploads, Bundles, Sync …)  
+- Einstellungen direkt im Fenster (keine policy.json mehr von Hand)  
+- Oben steht sofort „DATENKLAU-SCHUTZ AKTIV ✓“ + klare Liste der blockierten Kategorien
 
-# Unix
-python3 ~/.grok/proxy/ensure_proxy.py
-```
-
-Startet den Proxy **nur**, wenn Port **18743** noch nicht offen ist. Kein zweites Fenster nötig, wenn er schon läuft.
-
-### 5b. Mit VS Code Extension
-
+Start:
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install_vscode.ps1 -Workspace "C:\dein\projekt" -UserSettings
+python proxy\live_proxy_gui.py
 ```
+Oder die Desktop-Verknüpfung (wird beim Install angelegt).
 
-Details: **[VSCODE.md](VSCODE.md)**.
+Danach in Grok einfach `/new`.
+
+### 5b. VS Code + Autostart
+
+Die install-Skripte richten weiterhin `ensure_proxy` + Task ein.  
+Zusätzlich startest du einfach die GUI per Desktop-Shortcut.  
+Du siehst dann live, ob der Datenklau-Schutz steht.
 
 Kern in `~/.grok/config.toml`:
-
 ```toml
 [endpoints]
 cli_chat_proxy_base_url = "http://127.0.0.1:18743/v1"
 ```
 
-Danach: **`/new`** in Grok oder Window Reload.
-
-### 5c. Autostart bei Login
-
-```powershell
-# Windows
-powershell -ExecutionPolicy Bypass -File .\scripts\install_autostart.ps1
-# optional zusaetzlich:
-powershell -ExecutionPolicy Bypass -File .\scripts\install_autostart.ps1 -ScheduledTask
-# entfernen:
-powershell -ExecutionPolicy Bypass -File .\scripts\install_autostart.ps1 -Remove
-```
-
-```bash
-# macOS / Linux
-bash scripts/install_autostart.sh
-bash scripts/install_autostart.sh --remove
-```
-
-### 5d. Optional: Terminal-TUI mit Env
+### 5c. Terminal / Headless (optional)
 
 ```bat
 scripts\start_proxy.cmd
-scripts\start_grok_filtered.cmd
+scripts\start_proxy_silent.vbs   # Proxy unsichtbar, GUI sichtbar
 ```
 
-Mit gesetzter Config-`endpoints`-URL ist `start_grok_filtered` oft überflüssig — `ensure_proxy` + `grok` reicht.
+**Für die meisten Nutzer reicht die Live-GUI.**  
+Ein Schalter, Start per Button, sofort sichtbar dass Datenklau blockiert ist. Kein manuelles Edit von Prefixen nötig.
 
 Logs: `~/.grok/proxy/logs/` und ggf. Repo `logs/`.
 
@@ -238,13 +220,13 @@ Für formelle Löschung:
 ## 10. Alltags-Workflow (Empfehlung)
 
 ```text
-1. start_proxy
-2. start_grok_filtered
+1. Live-GUI starten (Desktop-Shortcut oder python proxy\live_proxy_gui.py)
+2. Proxy-Button klicken (Datenklau-Schutz ist automatisch an)
 3. Arbeiten
-4. Proxy-Logs bei Verdacht prüfen (BLOCK-Zeilen)
+4. In der GUI siehst du sofort Status + Blocks
 ```
 
-**Nicht** Grok ohne Proxy auf sensiblen Repos starten, wenn du den Filter willst.
+Die GUI ist die einfache, sichtbare Kontrolle. Kein manuelles Rumfummeln in Configs.
 
 ---
 

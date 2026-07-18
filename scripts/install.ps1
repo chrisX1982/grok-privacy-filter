@@ -80,13 +80,32 @@ $hookJsonPath = Join-Path $HooksDir "block-xai-upload.json"
 
 Write-Host "Hook installiert: $hookJsonPath (PreToolUse upload-block + SessionStart proxy-health)"
 
-# --- Proxy + ensure_proxy + policy ---
+# --- Proxy + ensure_proxy + policy + Live-GUI ---
 Copy-Item -Force (Join-Path $RepoRoot "proxy\xai_filter_proxy.py") (Join-Path $ProxyDir "xai_filter_proxy.py")
 Copy-Item -Force (Join-Path $RepoRoot "proxy\policy.json") (Join-Path $ProxyDir "policy.json")
 Copy-Item -Force (Join-Path $RepoRoot "scripts\ensure_proxy.py") (Join-Path $ProxyDir "ensure_proxy.py")
+Copy-Item -Force (Join-Path $RepoRoot "proxy\live_proxy_gui.py") (Join-Path $ProxyDir "live_proxy_gui.py") -ErrorAction SilentlyContinue
 Copy-Item -Force (Join-Path $RepoRoot "scripts\start_proxy.cmd") (Join-Path $ProxyDir "start_proxy.cmd") -ErrorAction SilentlyContinue
 Copy-Item -Force (Join-Path $RepoRoot "scripts\start_grok_filtered.cmd") (Join-Path $ProxyDir "start_grok_filtered.cmd") -ErrorAction SilentlyContinue
-Write-Host "Proxy kopiert nach: $ProxyDir"
+
+# Desktop-Verknüpfung für Live-GUI anlegen
+$desktop = [Environment]::GetFolderPath("Desktop")
+$guiBat = Join-Path $ProxyDir "start_live_gui.bat"
+@"
+@echo off
+cd /d "%~dp0"
+python live_proxy_gui.py
+"@ | Set-Content -Path $guiBat -Encoding ASCII
+
+$shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut("$desktop\Proxy Live Status.lnk")
+$shortcut.TargetPath = $guiBat
+$shortcut.WorkingDirectory = $ProxyDir
+$shortcut.Description = "Grok Proxy Live-Anzeige + Datenklau-Schutz"
+$shortcut.Save()
+
+Write-Host "Proxy + Live-GUI kopiert nach: $ProxyDir"
+Write-Host "  - live_proxy_gui.py = zentrale Oberfläche (Start + Datenklau-Schutz + Einstellungen)"
+Write-Host "  - Desktop-Verknüpfung 'Proxy Live Status' angelegt"
 
 # endpoints in config (VS Code Extension)
 $ConfigPath = Join-Path $GrokHome "config.toml"

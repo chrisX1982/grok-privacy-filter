@@ -22,8 +22,17 @@ Dieses Repo bündelt **sofort nutzbare** Gegenmassnahmen für Einzelpersonen:
 | 5 | Autostart / VS Code Task | Proxy bei Login bzw. beim Öffnen des Workspace |
 | 6 | (optional) Firewall | Nur Auth + lokaler Proxy — siehe Docs |
 
-**VS Code Extension:** Kein extra CMD — Config `cli_chat_proxy_base_url` + Hintergrund-Proxy.  
-Details: **[docs/VSCODE.md](docs/VSCODE.md)**.
+**Live-GUI (empfohlen für normale Nutzer):** `proxy/live_proxy_gui.py`
+
+- Proxy starten/stoppen per Button (startet automatisch mit vollem Datenklau-Schutz)
+- Ein-Klick „Datenklau-Schutz aktiv“ → blockiert **wirklich alles** was Datenklau ermöglicht:
+  Dateizugriff, Code/Workspace auslesen, Uploads, Telemetrie, Feedback, Bundles, Sync
+- Einstellungen im Fenster (keine Policy.json mehr von Hand)
+- Deutliche Anzeige: „DATENKLAU-SCHUTZ AKTIV ✓ – Blockiert: ...“
+
+Start: Doppelklick auf die .bat oder `python proxy/live_proxy_gui.py`
+
+Das ist der einfache Weg: ein Schalter für den kompletten Exfiltrations-Schutz. Keine 20 Presets.
 
 **Scope (ehrlich):** Filtert Pfade auf `cli-chat-proxy` (Storage/Upload default-deny).  
 Chat/Inference bleibt nutzbar. Blockiert **nicht** magisch alle Hosts der Welt und beweist **keine** Server-Löschung.  
@@ -137,11 +146,14 @@ grok-privacy-filter/
 - `/v1/privacy/coding-data-retention`
 - `/v1/settings` — **nur GET**
 
-**Deny:**
+**Deny (Datenklau/Exfiltration):**
 
-- `/v1/storage`, Upload/Sync/Trace/Telemetry-Pfade  
-- **alles andere** (default-deny)  
-- Heuristik: Git-PACK / Bundle-Signaturen im Body  
+- `/v1/storage`, `/v1/upload`, `/storage`
+- `/v1/codebase`, `/v1/workspace`, `/v1/sync`
+- `/v1/telemetry`, `/v1/feedback`, `/v1/bundle`, `/v1/trace`
+- **Default-Deny** für alles andere
+
+**Live-Steuerung:** Die `live_proxy_gui.py` zeigt Status, Logs und erlaubt direkten Start + einfache Konfiguration des **Datenklau-Schutzes** (Checkbox „Datenklau-Schutz aktiv“ setzt alle kritischen Blöcke). Kein manuelles Edit von policy.json nötig.
 
 Upstream: `https://cli-chat-proxy.grok.com`  
 Lokal: `http://127.0.0.1:18743`  
